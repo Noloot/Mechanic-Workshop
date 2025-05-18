@@ -172,7 +172,103 @@ def delete_customer(id):
     db.session.commit()
     return jsonify({"message": f"successfully deleted customer {id}"}), 200
 
-# ? This is the service ticket
+# ? This is the mechanics
+
+@app.route('/mechanics', methods=['GET'])
+def get_mechanics():
+    query = select(Mechanic)
+    result = db.session.execute(query).scalars().all()
+    return mechanics_schema.jsonify(result)
+
+@app.route('/mechanics/<int:id>', methods=['GET'])
+def get_mechanic(id):
+    mechanic = db.session.get(Mechanic, id)
+    if not mechanic:
+        return jsonify({'message': 'Mechanic not found'}), 404
+    return mechanic_schema.jsonify(mechanic)
+
+@app.route('/mechanics', methods=['POST'])
+def add_mechanic():
+    try:
+        mechanic_data = mechanic_schema.load(request.json)
+    except ValidationError as e:
+        return jsonify(e.messages), 404
+    
+    new_mechanic = Mechanic(**mechanic_data)
+    db.session.add(new_mechanic)
+    db.session.commit()
+    return jsonify({'message': 'Mechanic added', 'mechanic': mechanic_schema.dump(new_mechanic)}), 201
+
+@app.route('/mechanics/<int:id>', methods=['PUT'])
+def update_mechainc(id):
+    mechanic = db.session.get(Mechanic, id)
+    if not mechanic:
+        return jsonify({'message': 'Mechanic not found'}), 404
+    try:
+        mechanic_data = mechanic_schema.load(request.json)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    for key, value in mechanic_data.items():
+        setattr(mechanic, key, value)
+    db.session.commit()
+    return mechanic_schema.jsonify(mechanic)
+
+@app.route('/mechanics/<int:id>', methods=['DELETE'])
+def delete_mechanic(id):
+    mechanic = db.session.get(Mechanic, id)
+    if not mechanic:
+        return jsonify({'message': 'Mechanic not found'}), 404
+    
+    db.session.delete(mechanic)
+    db.session.commit()
+    return jsonify({'message': f'Mechanic {id} deleted successfully'})
+
+@app.route('/cars', methods=['GET'])
+def get_cars():
+    cars = db.session.execute(select(Car)).scalars().all()
+    return car_schema.jsonify(cars)
+
+@app.route('/cars/<int:id>', methods=['GET'])
+def get_car(id):
+    car = db.session.get(Car, id)
+    if not car:
+        return jsonify({'message': 'Car not found'}), 404
+    return car_schema.jsonify(car)
+
+@app.route('/cars', methods=['POST'])
+def add_car():
+    try:
+        car_data = car_schema.load(request.json)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    new_car = Car(**car_data)
+    db.session.add(new_car)
+    db.session.commit()
+    return jsonify({'message': 'Car added', 'car': car_schema.dump(new_car)}), 201
+
+@app.route('/cars/<int:id>', methods=['PUT'])
+def update_car(id):
+    car = db.session.get(Car, id)
+    if not car:
+        return jsonify({'message': 'Car not found'}), 404
+    try:
+        car_data = car_schema.load(request.json)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    for key, value in car_data.items():
+        setattr(car, key, value)
+    db.session.commit()
+    return car_schema.jsonify(car)
+
+@app.route('/cars/<int:id>', methods=['DELETE'])
+def delete_car(id):
+    car = db.session.get(Car, id)
+    if not car:
+        return jsonify({'message': 'Car not found'}), 404
+    db.session.delete(car)
+    db.session.commit()
+    return jsonify({'message': f'Car {id} deleted successfully'})
+    
 
 with app.app_context():
     db.create_all()
