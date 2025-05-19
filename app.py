@@ -1,282 +1,215 @@
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import select
-from marshmallow import ValidationError
-from flask_marshmallow import Marshmallow
-from datetime import date
-from typing import List
+from app import create_app
+from app.models import db
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:Mateo0106(@localhost/mechanic'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-class Base(DeclarativeBase):
-    pass
+app = create_app('DevelopmentConfig')
 
-db = SQLAlchemy(model_class= Base)
-db.init_app(app)
-ma = Marshmallow(app)
 
-class ServiceTicket(Base):
-    __tablename__ = 'service_ticket'
-    
-    id: Mapped[int] = mapped_column(primary_key= True)
-    service_date: Mapped[date] = mapped_column(db.Date, nullable=False)
-    customer_id: Mapped[int] = mapped_column(db.ForeignKey('customer.id'))
-    VIN: Mapped[str] = mapped_column(db.String(220), nullable= False)
-    car_id:  Mapped[str] = mapped_column(db.String(500), nullable= True)
-    
-class Customer(Base):
-    __tablename__ = 'customer'
-    
-    id: Mapped[int] = mapped_column(primary_key= True)
-    name: Mapped[str] = mapped_column(db.String(250), nullable=False)
-    email: Mapped[str] = mapped_column(db.String(359), nullable=False, unique=True)
-    phone: Mapped[int] = mapped_column(db.String(250), nullable=False)
-    address: Mapped[str] = mapped_column(db.String(250), nullable=False)
-    
-    cars: Mapped[List['Car']] = db.relationship(back_populates='customer')
-    
-class Mechanic(Base):
-    __tablename__ = 'mechanic'
-    
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(db.String(150), nullable=False)
-    email: Mapped[str] = mapped_column(db.String(300), unique=True)
-    address: Mapped[str] = mapped_column(db.String(300), nullable=False)
-    phone: Mapped[int] = mapped_column(db.String(250), nullable=False)
-    password: Mapped[str] = mapped_column(db.String(350), nullable=False)
-    salary: Mapped[int] = mapped_column()
-    
-class Car(Base):
-    __tablename__ = 'car'
-    
-    id: Mapped[int] = mapped_column(primary_key=True)
-    color: Mapped[str] = mapped_column(db.String(50))
-    make: Mapped[str] = mapped_column(db.String(100), nullable=False)
-    model: Mapped[str] = mapped_column(db.String(100), nullable=False)
-    model_year: Mapped[int] = mapped_column()
-    
 
-    customer_id: Mapped[int] = mapped_column(db.ForeignKey("customer.id"))
-    customer: Mapped['Customer'] = db.relationship(back_populates='cars')
+# from flask import Flask, request, jsonify
+# from flask_sqlalchemy import SQLAlchemy
+# from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+# from sqlalchemy import select
+# from marshmallow import ValidationError
 
-class CustomerSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Customer
-        sqla_session = db.session
-        load_instance = True
+# from datetime import date
+# from typing import List
+
+# app = Flask(__name__)
+
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+
+
+
+
         
-class MechanicSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Mechanic
-        sqla_session = db.session
-        load_instance = True
+# class MechanicSchema(ma.SQLAlchemyAutoSchema):
+#     class Meta:
+#         model = Mechanic
+#         sqla_session = db.session
+#         load_instance = True
 
-class CarSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Car
-        sqla_session = db.session
-        load_instance = True
+# class CarSchema(ma.SQLAlchemyAutoSchema):
+#     class Meta:
+#         model = Car
+#         sqla_session = db.session
+#         load_instance = True
+#         include_fk = True
         
-class ServiceTicketSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = ServiceTicket
-        sqla_session = db.session
-        load_instance = True
-        include_fk = True
+# class ServiceTicketSchema(ma.SQLAlchemyAutoSchema):
+#     class Meta:
+#         model = ServiceTicket
+#         sqla_session = db.session
+#         load_instance = True
+#         include_fk = True
 
-customer_schema = CustomerSchema()
-customers_schema = CustomerSchema(many=True)
 
-mechanic_schema = MechanicSchema()
-mechanics_schema = MechanicSchema(many=True)
 
-car_schema = CarSchema()
-car_schema = CarSchema(many=True)
+# mechanic_schema = MechanicSchema()
+# mechanics_schema = MechanicSchema(many=True)
 
-service_ticket_schema = ServiceTicketSchema()
-service_ticket_schema = ServiceTicketSchema(many=True)
+# car_schema = CarSchema()
+# cars_schema = CarSchema(many=True)
 
-@app.route('/')
-def home():
-    return "Home"
+# service_ticket_schema = ServiceTicketSchema()
+# service_tickets_schema = ServiceTicketSchema(many=True)
 
-# ? This is the customer section
+# @app.route('/')
+# def home():
+#     return "Home"
 
-@app.route("/customers", methods=['GET'])
-def get_customers():
+# # ? This is the Customer methods
+
+
+# # ? This is the Mechanics method
+
+# @app.route('/mechanics', methods=['GET'])
+# def get_mechanics():
+#     query = select(Mechanic)
+#     result = db.session.execute(query).scalars().all()
+#     return mechanics_schema.jsonify(result)
+
+# @app.route('/mechanics/<int:id>', methods=['GET'])
+# def get_mechanic(id):
+#     mechanic = db.session.get(Mechanic, id)
+#     if not mechanic:
+#         return jsonify({'message': 'Mechanic not found'}), 404
+#     return mechanic_schema.jsonify(mechanic)
+
+# @app.route('/mechanics', methods=['POST'])
+# def add_mechanic():
+#     try:
+#         mechanic = mechanic_schema.load(request.json)
+#     except ValidationError as e:
+#         return jsonify(e.messages), 404
     
-    page = int(request.args.get('page', 1))
-    limit = int(request.args.get('limit', 10))
-    offset = (page - 1) * limit
     
-    query = select(Customer).offset(offset).limit(limit)
-    result = db.session.execute(query).scalars().all()
-    
-    return customers_schema.jsonify(result)
+#     db.session.add(mechanic)
+#     db.session.commit()
+#     return jsonify({'message': 'Mechanic added', 'mechanic': mechanic_schema.dump(mechanic)}), 201
 
-@app.route("/customers/<int:id>", methods=['GET'])
-def get_customer(id):
-    query = select(Customer).where(Customer.id == id)
-    result = db.session.execute(query).scalars().first()
+# @app.route('/mechanics/<int:id>', methods=['PUT'])
+# def update_mechanic(id):
+#     mechanic = db.session.get(Mechanic, id)
+#     if not mechanic:
+#         return jsonify({'message': 'Mechanic not found'}), 404
+#     try:
+#         mechanic = mechanic_schema.load(request.json, instance=mechanic)
+#     except ValidationError as e:
+#         return jsonify(e.messages), 400
     
-    if result is None:
-        return jsonify({"Error": "Customer not found"}),404
-    
-    return customer_schema.jsonify(result)
+#     db.session.commit()
+#     return mechanic_schema.jsonify(mechanic), 200
 
-@app.route("/customers", methods=['POST'])
-def add_customer():
-    try:
-        customer_data = customer_schema.load(request.json)
-    except ValidationError as e:
-        return jsonify(e.messages),400
+# @app.route('/mechanics/<int:id>', methods=['DELETE'])
+# def delete_mechanic(id):
+#     mechanic = db.session.get(Mechanic, id)
+#     if not mechanic:
+#         return jsonify({'message': 'Mechanic not found'}), 404
     
-    new_customer = Customer(name=customer_data['name'], email=customer_data['email'], phone=customer_data['phone'], address=customer_data['address'])
-    db.session.add(new_customer)
-    db.session.commit()
+#     db.session.delete(mechanic)
+#     db.session.commit()
+#     return jsonify({'message': f'Mechanic {id} deleted successfully'})
+
+# # ? This is the Cars Methods
+
+# @app.route('/cars', methods=['GET'])
+# def get_cars():
+#     cars = db.session.execute(select(Car)).scalars().all()
+#     return cars_schema.jsonify(cars)
+
+# @app.route('/cars/<int:id>', methods=['GET'])
+# def get_car(id):
+#     car = db.session.get(Car, id)
+#     if not car:
+#         return jsonify({'message': 'Car not found'}), 404
+#     return car_schema.jsonify(car)
+
+# @app.route('/cars', methods=['POST'])
+# def add_car():
+#     try: 
+#         car = car_schema.load(request.json)
+#     except ValidationError as e:
+#         return jsonify(e.messages), 400
+#     db.session.add(car)
+#     db.session.commit()
+#     return jsonify({'message': 'Car added', 'car': car_schema.dump(car)}), 201
+
+# @app.route('/cars/<int:id>', methods=['PUT'])
+# def update_car(id):
+#     car = db.session.get(Car, id)
+#     if not car:
+#         return jsonify({'message': 'Car not found'}), 404
+#     try:
+#         car = car_schema.load(request.json, instance=car)
+#     except ValidationError as e:
+#         return jsonify(e.messages), 400
     
-    return jsonify({"Message": "New customer added successfully!",
-                    "customer": customer_schema.dump(new_customer)}), 201
+#     db.session.commit()
+#     return car_schema.jsonify(car)
+
+# @app.route('/cars/<int:id>', methods=['DELETE'])
+# def delete_car(id):
+#     car = db.session.get(Car, id)
+#     if not car:
+#         return jsonify({'message': 'Car not found'}), 404
+#     db.session.delete(car)
+#     db.session.commit()
+#     return jsonify({'message': f'Car {id} deleted successfully'})
     
-@app.route('/customers/<int:id>', methods=['PUT'])
-def update_customer(id):
-    customer = db.session.get(Customer, id)
+# # ? This is the Tickets method
+
+# @app.route('/tickets', methods=['GET'])
+# def get_tickets():
+#     tickets = db.session.execute(select(ServiceTicket)).scalars().all()
+#     return service_tickets_schema.jsonify(tickets)
+
+# @app.route('/tickets/<int:id>', methods=['GET'])
+# def get_ticket(id):
+#     ticket = db.session.get(ServiceTicket, id)
+#     if not ticket:
+#         return jsonify({'message': 'Ticket not found'})
+#     return service_ticket_schema.jsonify(ticket)
+
+# @app.route('/tickets', methods=['POST'])
+# def add_ticket():
+#     try:
+#         ticket = service_ticket_schema.load(request.json)
+#     except ValidationError as e:
+#         return jsonify(e.messages), 400
     
-    if not customer:
-        return jsonify({"message": "Invalid customer id"}), 400
     
-    try:
-        customer_data = customer_schema.load(request.json)
-    except ValidationError as e:
-        return jsonify(e.messages), 400
+#     db.session.add(ticket)
+#     db.session.commit()
+#     return jsonify({'message': 'Ticekt created', 'ticket': service_ticket_schema.dump(ticket)}), 201
+
+# @app.route('/tickets/<int:id>', methods=['PUT'])
+# def update_ticket(id):
+#     ticket = db.session.get(ServiceTicket, id)
+#     if not ticket:
+#         return jsonify({'message': 'Ticket not found'}), 404
+#     try:
+#         ticket = service_ticket_schema.load(request.json, instance=ticket)
+#     except ValidationError as e:
+#         return jsonify(e.messages), 400
     
-    customer.name = customer_data['name']
-    customer.email = customer_data['email']
-    customer.address = customer_data['address']
-    customer.phone = customer_data['phone']
-    
-    db.session.commit()
-    return customer_schema.jsonify(customer), 200
+#     db.session.commit()
+#     return service_ticket_schema.jsonify(ticket)
 
-@app.route('/customers/<int:id>', methods=['DELETE'])
-def delete_customer(id):
-    customer = db.session.get(Customer, id)
-    
-    if not customer:
-        return jsonify({"message": "Invalid  customer id"}), 400
-    
-    db.session.delete(customer)
-    db.session.commit()
-    return jsonify({"message": f"successfully deleted customer {id}"}), 200
-
-# ? This is the mechanics
-
-@app.route('/mechanics', methods=['GET'])
-def get_mechanics():
-    query = select(Mechanic)
-    result = db.session.execute(query).scalars().all()
-    return mechanics_schema.jsonify(result)
-
-@app.route('/mechanics/<int:id>', methods=['GET'])
-def get_mechanic(id):
-    mechanic = db.session.get(Mechanic, id)
-    if not mechanic:
-        return jsonify({'message': 'Mechanic not found'}), 404
-    return mechanic_schema.jsonify(mechanic)
-
-@app.route('/mechanics', methods=['POST'])
-def add_mechanic():
-    try:
-        mechanic_data = mechanic_schema.load(request.json)
-    except ValidationError as e:
-        return jsonify(e.messages), 404
-    
-    new_mechanic = Mechanic(**mechanic_data)
-    db.session.add(new_mechanic)
-    db.session.commit()
-    return jsonify({'message': 'Mechanic added', 'mechanic': mechanic_schema.dump(new_mechanic)}), 201
-
-@app.route('/mechanics/<int:id>', methods=['PUT'])
-def update_mechainc(id):
-    mechanic = db.session.get(Mechanic, id)
-    if not mechanic:
-        return jsonify({'message': 'Mechanic not found'}), 404
-    try:
-        mechanic_data = mechanic_schema.load(request.json)
-    except ValidationError as e:
-        return jsonify(e.messages), 400
-    for key, value in mechanic_data.items():
-        setattr(mechanic, key, value)
-    db.session.commit()
-    return mechanic_schema.jsonify(mechanic)
-
-@app.route('/mechanics/<int:id>', methods=['DELETE'])
-def delete_mechanic(id):
-    mechanic = db.session.get(Mechanic, id)
-    if not mechanic:
-        return jsonify({'message': 'Mechanic not found'}), 404
-    
-    db.session.delete(mechanic)
-    db.session.commit()
-    return jsonify({'message': f'Mechanic {id} deleted successfully'})
-
-@app.route('/cars', methods=['GET'])
-def get_cars():
-    cars = db.session.execute(select(Car)).scalars().all()
-    return car_schema.jsonify(cars)
-
-@app.route('/cars/<int:id>', methods=['GET'])
-def get_car(id):
-    car = db.session.get(Car, id)
-    if not car:
-        return jsonify({'message': 'Car not found'}), 404
-    return car_schema.jsonify(car)
-
-@app.route('/cars', methods=['POST'])
-def add_car():
-    try:
-        car_data = car_schema.load(request.json)
-    except ValidationError as e:
-        return jsonify(e.messages), 400
-    new_car = Car(**car_data)
-    db.session.add(new_car)
-    db.session.commit()
-    return jsonify({'message': 'Car added', 'car': car_schema.dump(new_car)}), 201
-
-@app.route('/cars/<int:id>', methods=['PUT'])
-def update_car(id):
-    car = db.session.get(Car, id)
-    if not car:
-        return jsonify({'message': 'Car not found'}), 404
-    try:
-        car_data = car_schema.load(request.json)
-    except ValidationError as e:
-        return jsonify(e.messages), 400
-    for key, value in car_data.items():
-        setattr(car, key, value)
-    db.session.commit()
-    return car_schema.jsonify(car)
-
-@app.route('/cars/<int:id>', methods=['DELETE'])
-def delete_car(id):
-    car = db.session.get(Car, id)
-    if not car:
-        return jsonify({'message': 'Car not found'}), 404
-    db.session.delete(car)
-    db.session.commit()
-    return jsonify({'message': f'Car {id} deleted successfully'})
-    
+# @app.route('/tickets/<int:id>', methods=['DELETE'])
+# def delete_ticket(id):
+#     ticket = db.session.get(ServiceTicket, id)
+#     if not ticket:
+#         return jsonify({'message': 'Ticket not found'}), 404
+#     db.session.delete(ticket)
+#     db.session.commit()
+#     return jsonify({'message': f'Ticket {id} deleted successfully'})
 
 with app.app_context():
+    # db.drop_all()
     db.create_all()
     
-# with app.app_context():
-#     with db.engine.begin() as conn:
-#         conn.execute(db.text("SET FOREIGN_KEY_CHECKS = 0;"))
-#         conn.execute(db.text("DROP TABLE IF EXISTS service_tickets;"))
-#         conn.execute(db.text("SET FOREIGN_KEY_CHECKS = 1;"))
 
-app.run(debug=True)
+app.run()
