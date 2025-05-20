@@ -1,5 +1,4 @@
-from app.models import db
-from app.models import Mechanic
+from app.models import db, Mechanic
 from app.extensions import ma
 
 class MechanicSchema(ma.SQLAlchemyAutoSchema):
