@@ -6,6 +6,7 @@ from app.models import db, Mechanic
 from . import mechanics_bp
 from app.extensions import cache
 from app.utils.util import encode_token, token_required
+from werkzeug.security import generate_password_hash, check_password_hash
 
 @mechanics_bp.route('/login', methods=['POST'])
 def login():
@@ -19,7 +20,7 @@ def login():
     query = select(Mechanic).where(Mechanic.email == email)
     mechanic = db.session.execute(query).scalar_one_or_none()
     
-    if mechanic and mechanic.password == password:
+    if mechanic and check_password_hash(mechanic.password, password):
         auth_token = encode_token(mechanic.id)
         
         response = {
@@ -54,6 +55,7 @@ def add_mechanic():
     except ValidationError as e:
         return jsonify(e.messages), 404
     
+    mechanic.password = generate_password_hash(mechanic.password)
     
     db.session.add(mechanic)
     db.session.commit()

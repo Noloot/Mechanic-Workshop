@@ -84,7 +84,6 @@ def update_ticket(id):
     return service_ticket_schema.jsonify(ticket), 200
 
 @serviceTicket_bp.route('/<int:id>', methods=['DELETE'])
-@token_required
 def delete_ticket(id):
     ticket = db.session.get(ServiceTicket, id)
     if not ticket:
