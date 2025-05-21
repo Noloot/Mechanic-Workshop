@@ -4,6 +4,7 @@ from marshmallow import ValidationError
 from .schemas import car_schema, cars_schema
 from app.models import db, Car
 from . import cars_bp
+from app.extensions import limiter
 
 
 @cars_bp.route('/', methods=['GET'])

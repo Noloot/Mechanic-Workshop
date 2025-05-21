@@ -4,9 +4,12 @@ from marshmallow import ValidationError
 from .schemas import service_ticket_schema, service_tickets_schema
 from sqlalchemy import select
 from . import serviceTicket_bp
+from app.extensions import limiter, cache
+from app.utils.util import token_required
 
 
 @serviceTicket_bp.route('/', methods=['GET'])
+@cache.cached(timeout=30)
 def get_tickets():
     tickets = db.session.execute(select(ServiceTicket)).scalars().all()
     return service_tickets_schema.jsonify(tickets)
@@ -19,6 +22,7 @@ def get_ticket(id):
     return service_ticket_schema.jsonify(ticket)
 
 @serviceTicket_bp.route('/', methods=['POST'])
+@limiter.limit("15 per hour")
 def add_ticket():
     try:
         ticket = service_ticket_schema.load(request.json)
@@ -31,6 +35,7 @@ def add_ticket():
     return jsonify({'message': 'Ticekt created', 'ticket': service_ticket_schema.dump(ticket)}), 201
 
 @serviceTicket_bp.route('/<int:ticket_id>/assign-mechanic/<int:mechanic_id>', methods=['PUT'])
+@limiter.exempt
 def assign_mechanic(ticket_id, mechanic_id):
     ticket = db.session.get(ServiceTicket, ticket_id)
     if not ticket:
@@ -79,6 +84,7 @@ def update_ticket(id):
     return service_ticket_schema.jsonify(ticket), 200
 
 @serviceTicket_bp.route('/<int:id>', methods=['DELETE'])
+@token_required
 def delete_ticket(id):
     ticket = db.session.get(ServiceTicket, id)
     if not ticket:

@@ -4,10 +4,12 @@ from marshmallow import ValidationError
 from sqlalchemy import select
 from app.models import db, Customer
 from . import customers_bp
+from app.extensions import limiter, cache
 
 
 
 @customers_bp.route("/", methods=['GET'])
+@cache.cached(timeout=30)
 def get_customers():
     
     page = int(request.args.get('page', 1))
@@ -30,6 +32,7 @@ def get_customer(id):
     return customer_schema.jsonify(result)
 
 @customers_bp.route("/", methods=['POST'])
+@limiter.limit("15 per day", override_defaults=True)
 def add_customer():
     try:
         customer_data = customer_schema.load(request.json)
@@ -51,7 +54,7 @@ def update_customer(id):
         return jsonify({"message": "Invalid customer id"}), 404
     
     try:
-        customer_data = customer_schema.load(request.json, instance=customer)
+        customer = customer_schema.load(request.json, instance=customer)
     except ValidationError as e:
         return jsonify(e.messages), 400
     
@@ -59,6 +62,7 @@ def update_customer(id):
     return customer_schema.jsonify(customer), 200
 
 @customers_bp.route('/<int:id>', methods=['DELETE'])
+@limiter.limit("3 per day")
 def delete_customer(id):
     customer = db.session.get(Customer, id)
     
