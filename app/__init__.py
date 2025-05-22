@@ -2,7 +2,7 @@ from flask import Flask
 from app.extensions import ma, limiter, cache
 from app.models import db
 from app.blueprints.customers import customers_bp
-from app.blueprints.mechanics import mechanics_bp
+from app.blueprints.employees import employee_bp
 from app.blueprints.cars import cars_bp
 from app.blueprints.Service_Ticket import serviceTicket_bp
 
@@ -17,7 +17,7 @@ def create_app(config_name):
     
     
     app.register_blueprint(customers_bp, url_prefix='/customers')
-    app.register_blueprint(mechanics_bp, url_prefix='/mechanics')
+    app.register_blueprint(employee_bp, url_prefix='/employees')
     app.register_blueprint(cars_bp, url_prefix='/cars')
     app.register_blueprint(serviceTicket_bp, url_prefix='/tickets')
     

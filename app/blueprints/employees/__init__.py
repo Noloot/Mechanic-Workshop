@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-mechanics_bp = Blueprint('mechanics_bp', __name__)
+employee_bp = Blueprint('employee_bp', __name__)
 
 from . import routes
 

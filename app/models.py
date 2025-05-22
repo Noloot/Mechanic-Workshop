@@ -12,7 +12,7 @@ db = SQLAlchemy(model_class= Base)
 mechanic_ticket = db.Table(
     'mechanic_ticket',
     Base.metadata,
-    db.Column('mechanic_id', db.ForeignKey('mechanic.id'), primary_key=True),
+    db.Column('employee_id', db.ForeignKey('employee.id'), primary_key=True),
     db.Column('service_ticket_id', db.ForeignKey('service_ticket.id'), primary_key=True)
 )
 
@@ -25,7 +25,7 @@ class ServiceTicket(Base):
     VIN: Mapped[str] = mapped_column(db.String(220), nullable= False)
     car_issue:  Mapped[str] = mapped_column(db.String(500), nullable= True)
     
-    mechanics: Mapped[List['Mechanic']] = db.relationship('Mechanic', secondary=mechanic_ticket, back_populates='tickets')
+    employee: Mapped[List['Employee']] = db.relationship('Employee', secondary=mechanic_ticket, back_populates='tickets')
     
 class Customer(Base):
     __tablename__ = 'customer'
@@ -38,8 +38,8 @@ class Customer(Base):
     
     cars: Mapped[List['Car']] = db.relationship(back_populates='customer')
     
-class Mechanic(Base):
-    __tablename__ = 'mechanic'
+class Employee(Base):
+    __tablename__ = 'employee'
     
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(db.String(150), nullable=False)
@@ -48,8 +48,9 @@ class Mechanic(Base):
     phone: Mapped[int] = mapped_column(db.String(250), nullable=False)
     password: Mapped[str] = mapped_column(db.String(350), nullable=False)
     salary: Mapped[int] = mapped_column()
+    role: Mapped[str] = mapped_column(db.String(50), nullable=False)
     
-    tickets: Mapped[List['ServiceTicket']] = db.relationship('ServiceTicket', secondary=mechanic_ticket, back_populates='mechanics')
+    tickets: Mapped[List['ServiceTicket']] = db.relationship('ServiceTicket', secondary=mechanic_ticket, back_populates='employee')
     
 class Car(Base):
     __tablename__ = 'car'

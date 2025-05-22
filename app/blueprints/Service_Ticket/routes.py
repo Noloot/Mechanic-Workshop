@@ -5,7 +5,7 @@ from .schemas import service_ticket_schema, service_tickets_schema
 from sqlalchemy import select
 from . import serviceTicket_bp
 from app.extensions import limiter, cache
-from app.utils.util import token_required
+from app.utils.util import admin_required
 
 
 @serviceTicket_bp.route('/', methods=['GET'])
@@ -23,6 +23,7 @@ def get_ticket(id):
 
 @serviceTicket_bp.route('/', methods=['POST'])
 @limiter.limit("15 per hour")
+@admin_required
 def add_ticket():
     try:
         ticket = service_ticket_schema.load(request.json)
@@ -34,40 +35,42 @@ def add_ticket():
     db.session.commit()
     return jsonify({'message': 'Ticekt created', 'ticket': service_ticket_schema.dump(ticket)}), 201
 
-@serviceTicket_bp.route('/<int:ticket_id>/assign-mechanic/<int:mechanic_id>', methods=['PUT'])
+@serviceTicket_bp.route('/<int:ticket_id>/assign-mechanic/<int:employee_id>', methods=['PUT'])
 @limiter.exempt
-def assign_mechanic(ticket_id, mechanic_id):
+@admin_required
+def assign_mechanic(ticket_id, employee_id):
     ticket = db.session.get(ServiceTicket, ticket_id)
     if not ticket:
         return jsonify({'message': 'Ticket not found'}), 404
     
-    from app.models import Mechanic
-    mechanic = db.session.get(Mechanic, mechanic_id)
-    if not mechanic:
-        return jsonify({'message': 'Mechanic not found'}), 404
+    from app.models import Employee
+    employee = db.session.get(Employee, employee_id)
+    if not employee:
+        return jsonify({'message': 'Employee not found'}), 404
     
-    if mechanic not in ticket.mechanics:
-        ticket.mechanics.append(mechanic)
+    if employee not in ticket.employees:
+        ticket.employees.append(employee)
         db.session.commit()
         
-    return jsonify({'message': f'Mechanic {mechanic_id} assign to ticket {ticket_id}.'})
+    return jsonify({'message': f'Employee {employee_id} assign to ticket {ticket_id}.'})
 
-@serviceTicket_bp.route('/<int:ticket_id>/remove-mechanic/<int:mechanic_id>', methods=['PUT'])
-def remove_mechanic(ticket_id, mechanic_id):
+@serviceTicket_bp.route('/<int:ticket_id>/remove-mechanic/<int:employee_id>', methods=['PUT'])
+@admin_required
+def remove_mechanic(ticket_id, employee_id):
     ticket = db.session.get(ServiceTicket, ticket_id)
     if not ticket:
         return jsonify({'message': 'Ticket not found'}), 404
     
-    from app.models import Mechanic
-    mechanic = db.session.get(Mechanic, mechanic_id)
-    if not mechanic:
-        return jsonify({'message': 'Mechanic not found'}), 404
+    from app.models import Employee
+    employee = db.session.get(Employee, employee_id)
+    if not employee:
+        return jsonify({'message': 'Employee not found'}), 404
     
-    if mechanic in ticket.mechanics:
-        ticket.mechanics.remove(mechanic)
+    if employee in ticket.employees:
+        ticket.employees.remove(employee)
         db.session.commit()
         
-    return jsonify({'message': f'Mechanic {mechanic_id} removed from ticket {ticket_id}'})
+    return jsonify({'message': f'Employee {employee_id} removed from ticket {ticket_id}'})
 
 @serviceTicket_bp.route('/<int:id>', methods=['PUT'])
 def update_ticket(id):
@@ -84,6 +87,7 @@ def update_ticket(id):
     return service_ticket_schema.jsonify(ticket), 200
 
 @serviceTicket_bp.route('/<int:id>', methods=['DELETE'])
+@admin_required
 def delete_ticket(id):
     ticket = db.session.get(ServiceTicket, id)
     if not ticket:
