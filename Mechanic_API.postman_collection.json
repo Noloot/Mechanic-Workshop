@@ -261,7 +261,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Mechanics",
+			"name": "Get Employee",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -298,7 +298,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Mechanics by ID",
+			"name": "Get Employees by ID",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -336,7 +336,7 @@
 			"response": []
 		},
 		{
-			"name": "Add Mechanic",
+			"name": "Add Employee",
 			"request": {
 				"auth": {
 					"type": "noauth"
@@ -370,7 +370,7 @@
 			"response": []
 		},
 		{
-			"name": "Update Mechanic",
+			"name": "Update Employee",
 			"request": {
 				"auth": {
 					"type": "noauth"
@@ -405,7 +405,7 @@
 			"response": []
 		},
 		{
-			"name": "Delete Mechanic",
+			"name": "Delete Employee",
 			"request": {
 				"auth": {
 					"type": "noauth"
