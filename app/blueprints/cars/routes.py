@@ -5,6 +5,7 @@ from .schemas import car_schema, cars_schema
 from app.models import db, Car
 from . import cars_bp
 from app.extensions import limiter
+from app.utils.util import token_required
 
 
 @cars_bp.route('/', methods=['GET'])
@@ -30,17 +31,22 @@ def add_car():
     return jsonify({'message': 'Car added', 'car': car_schema.dump(car)}), 201
 
 @cars_bp.route('/<int:id>', methods=['PUT'])
+@token_required
 def update_car(id):
     car = db.session.get(Car, id)
     if not car:
         return jsonify({'message': 'Car not found'}), 404
+    
+    if request.user_id != car.customer_id and request.user_role != 'mechanic':
+        return jsonify({'message': 'Unauthorized'}), 403
+    
     try:
-        car = car_schema.load(request.json, instance=car)
+        updated_car = car_schema.load(request.json, instance=car, partial=True)
     except ValidationError as e:
         return jsonify(e.messages), 400
     
     db.session.commit()
-    return car_schema.jsonify(car)
+    return jsonify({'message': 'Car updated successfully', 'car': car_schema.dump(updated_car)}), 200
 
 @cars_bp.route('/<int:id>', methods=['DELETE'])
 def delete_car(id):

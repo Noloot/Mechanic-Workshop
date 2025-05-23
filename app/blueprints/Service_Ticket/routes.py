@@ -33,6 +33,13 @@ def add_ticket():
     
     db.session.add(ticket)
     db.session.commit()
+    
+    if ticket.is_major_damage:
+        
+        print(f"Simulated sending ticket {ticket.id} to sister site")
+        
+        return jsonify({'message': 'Ticket created and sent to sister site', 'ticket': service_ticket_schema.dump(ticket)}), 201
+    
     return jsonify({'message': 'Ticekt created', 'ticket': service_ticket_schema.dump(ticket)}), 201
 
 @serviceTicket_bp.route('/<int:ticket_id>/assign-mechanic/<int:employee_id>', methods=['PUT'])
@@ -48,13 +55,14 @@ def assign_mechanic(ticket_id, employee_id):
     if not employee:
         return jsonify({'message': 'Employee not found'}), 404
     
-    if employee not in ticket.employees:
-        ticket.employees.append(employee)
+    if employee not in ticket.employee:
+        ticket.employee.append(employee)
         db.session.commit()
         
     return jsonify({'message': f'Employee {employee_id} assign to ticket {ticket_id}.'})
 
 @serviceTicket_bp.route('/<int:ticket_id>/remove-mechanic/<int:employee_id>', methods=['PUT'])
+@limiter.exempt
 @admin_required
 def remove_mechanic(ticket_id, employee_id):
     ticket = db.session.get(ServiceTicket, ticket_id)
@@ -66,13 +74,15 @@ def remove_mechanic(ticket_id, employee_id):
     if not employee:
         return jsonify({'message': 'Employee not found'}), 404
     
-    if employee in ticket.employees:
-        ticket.employees.remove(employee)
+    if employee in ticket.employee:
+        ticket.employee.remove(employee)
         db.session.commit()
         
     return jsonify({'message': f'Employee {employee_id} removed from ticket {ticket_id}'})
 
-@serviceTicket_bp.route('/<int:id>', methods=['PUT'])
+@serviceTicket_bp.route('/<int:id>', methods=['PUT']) 
+@limiter.exempt
+@admin_required
 def update_ticket(id):
     ticket = db.session.get(ServiceTicket, id)
     if not ticket:

@@ -21,11 +21,15 @@ class ServiceTicket(Base):
     
     id: Mapped[int] = mapped_column(primary_key= True)
     service_date: Mapped[date] = mapped_column(db.Date, nullable=False)
-    customer_id: Mapped[int] = mapped_column(db.ForeignKey('customer.id'))
+    customer_id: Mapped[int] = mapped_column(db.ForeignKey('customer.id'), nullable=False)
+    car_id: Mapped[int] = mapped_column(db.ForeignKey('car.id'), nullable=False)
     VIN: Mapped[str] = mapped_column(db.String(220), nullable= False)
     car_issue:  Mapped[str] = mapped_column(db.String(500), nullable= True)
+    service_type: Mapped[str] = mapped_column(db.String(100), nullable=True)
+    is_major_damage: Mapped[bool] = mapped_column(db.Boolean, default=False)
     
     employee: Mapped[List['Employee']] = db.relationship('Employee', secondary=mechanic_ticket, back_populates='tickets')
+    car: Mapped['Car'] = db.relationship('Car', backref="owner", lazy=True)
     
 class Customer(Base):
     __tablename__ = 'customer'
@@ -35,6 +39,8 @@ class Customer(Base):
     email: Mapped[str] = mapped_column(db.String(359), nullable=False, unique=True)
     phone: Mapped[int] = mapped_column(db.String(250), nullable=False)
     address: Mapped[str] = mapped_column(db.String(250), nullable=False)
+    password: Mapped[str] = mapped_column(db.String(350), nullable=False)
+    role: Mapped[str] = mapped_column(db.String(50), nullable=False)
     
     cars: Mapped[List['Car']] = db.relationship(back_populates='customer')
     

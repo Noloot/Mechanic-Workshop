@@ -1,12 +1,85 @@
-from .schemas import customer_schema, customers_schema
+from .schemas import customer_schema, customers_schema, login_schema
+from app.blueprints.cars.schemas import cars_schema, car_schema
 from flask import request, jsonify
 from marshmallow import ValidationError
 from sqlalchemy import select
-from app.models import db, Customer
+from app.models import db, Customer, Car
 from . import customers_bp
 from app.extensions import limiter, cache
+from app.utils.util import encode_token, token_required
+from werkzeug.security import generate_password_hash, check_password_hash
 
+@customers_bp.route("/login", methods=['POST'])
+def login():
+    try:
+        credentials = login_schema.load(request.json)
+        email = credentials.email
+        password = credentials.password
+    except ValidationError as e:
+        return jsonify({'message': 'Validation error', 'errors': e.messages}), 400
+    
+    query = select(Customer).where(Customer.email == email)
+    customer = db.session.execute(query).scalar_one_or_none()
+    
+    if customer and check_password_hash(customer.password, password):
+        auth_token = encode_token(customer.id, customer.role)
+        
+        response = {
+            "Status": "success",
+            "message": "Successfully Logged In",
+            "auth_token": auth_token
+        }
+        
+        return jsonify(response), 200
+    else:
+        return jsonify({'message': 'Invalid email or password'}), 401
 
+@customers_bp.route("/", methods=['POST'])
+@limiter.limit("15 per day", override_defaults=True)
+def add_customer():
+    try:
+        customer_data = customer_schema.load(request.json)
+    except ValidationError as e:
+        return jsonify(e.messages),400
+    
+    customer_data.password = generate_password_hash(customer_data.password)
+    
+    new_customer = customer_data
+    db.session.add(new_customer)
+    db.session.commit()
+    
+    return jsonify({"Message": "New customer added successfully!",
+                    "customer": customer_schema.dump(new_customer)}), 201
+
+@customers_bp.route("/<int:customer_id>/cars", methods=['POST'])
+@token_required
+def add_car_for_customer(customer_id):
+    if request.user_id != customer_id:
+        return jsonify({'message': 'Unauthorized to add car for this customer'}), 403
+    
+    customer = db.session.get(Customer, customer_id)
+    if not customer:
+        return jsonify({'message': 'Customer not found'}), 404
+    
+    try:
+        car_data = request.get_json()
+        car = car_schema.load(car_data)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    
+    car.customer_id = customer.id
+    db.session.add(car)
+    db.session.commit()
+    
+    return jsonify({'message': 'Car added successfully for customer', 'car': car_schema.dump(car)}), 201
+
+@customers_bp.route("/<int:customer_id>/cars", methods=['GET'])
+def get_customer_cars(customer_id):
+    customer = db.session.get(Customer, customer_id)
+    if not customer:
+        return jsonify({'message': 'Customer not found'})
+    
+    return cars_schema.jsonify(customer.cars), 200
 
 @customers_bp.route("/", methods=['GET'])
 @cache.cached(timeout=30)
@@ -31,21 +104,6 @@ def get_customer(id):
     
     return customer_schema.jsonify(result)
 
-@customers_bp.route("/", methods=['POST'])
-@limiter.limit("15 per day", override_defaults=True)
-def add_customer():
-    try:
-        customer_data = customer_schema.load(request.json)
-    except ValidationError as e:
-        return jsonify(e.messages),400
-    
-    new_customer = customer_data
-    db.session.add(new_customer)
-    db.session.commit()
-    
-    return jsonify({"Message": "New customer added successfully!",
-                    "customer": customer_schema.dump(new_customer)}), 201
-    
 @customers_bp.route('/<int:id>', methods=['PUT'])
 def update_customer(id):
     customer = db.session.get(Customer, id)

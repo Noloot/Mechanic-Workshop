@@ -5,7 +5,7 @@ from sqlalchemy import select
 from app.models import db, Employee
 from . import employee_bp
 from app.extensions import cache
-from app.utils.util import encode_token, token_required
+from app.utils.util import encode_token, admin_required
 from werkzeug.security import generate_password_hash, check_password_hash
 
 @employee_bp.route('/login', methods=['POST'])
@@ -62,6 +62,7 @@ def add_employee():
     return jsonify({'message': 'Employee added', 'employee': employee_schema.dump(employee)}), 201
 
 @employee_bp.route('/<int:id>', methods=['PUT'])
+@admin_required
 def update_employee(id):
     employee = db.session.get(Employee, id)
     if not employee:
@@ -75,7 +76,7 @@ def update_employee(id):
     return employee_schema.jsonify(employee), 200
 
 @employee_bp.route('/<int:id>', methods=['DELETE'])
-@token_required
+@admin_required
 def delete_employee(id):
     employee = db.session.get(Employee, id)
     if not employee:
