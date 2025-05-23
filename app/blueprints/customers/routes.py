@@ -35,7 +35,6 @@ def login():
         return jsonify({'message': 'Invalid email or password'}), 401
 
 @customers_bp.route("/", methods=['POST'])
-@cache.cached(timeout=30)
 @limiter.limit("15 per day", override_defaults=True)
 def add_customer():
     try:
@@ -53,7 +52,6 @@ def add_customer():
                     "customer": customer_schema.dump(new_customer)}), 201
 
 @customers_bp.route("/<int:customer_id>/cars", methods=['POST'])
-@cache.cached(timeout=30)
 @token_required
 def add_car_for_customer(customer_id):
     if request.user_id != customer_id:
@@ -76,6 +74,7 @@ def add_car_for_customer(customer_id):
     return jsonify({'message': 'Car added successfully for customer', 'car': car_schema.dump(car)}), 201
 
 @customers_bp.route("/<int:customer_id>/cars", methods=['GET'])
+@cache.cached(timeout=30)
 def get_customer_cars(customer_id):
     customer = db.session.get(Customer, customer_id)
     if not customer:
