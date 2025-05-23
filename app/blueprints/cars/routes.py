@@ -7,6 +7,14 @@ from . import cars_bp
 from app.extensions import limiter
 from app.utils.util import token_required
 
+@cars_bp.route('/search', methods=['GET'])
+def search_car():
+    make = request.args.get('make')
+    
+    query = select(Car).where(Car.make.like(f'%{make}%'))
+    cars = db.session.execute(query).scalars().all()
+    
+    return cars_schema.jsonify(cars)
 
 @cars_bp.route('/', methods=['GET'])
 def get_cars():
