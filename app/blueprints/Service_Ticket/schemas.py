@@ -1,8 +1,10 @@
 from app.extensions import ma
 from app.models import db, ServiceTicket
-
+from marshmallow import fields
 
 class ServiceTicketSchema(ma.SQLAlchemyAutoSchema):
+    services = fields.Nested('app.blueprints.service_type.schemas.ServiceTypeSchema', many=True)
+    
     class Meta:
         model = ServiceTicket
         sqla_session = db.session

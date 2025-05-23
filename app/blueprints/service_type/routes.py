@@ -1,7 +1,8 @@
 from flask import request, jsonify
-from app.models import db, ServiceType
+from app.models import db, ServiceType, ServiceTicket
 from marshmallow import ValidationError
 from .schemas import service_type_schema, service_types_schema
+from app.blueprints.Service_Ticket.schemas import service_ticket_schema
 from sqlalchemy import select
 from . import serviceType_bp
 from app.utils.util import admin_required
@@ -19,6 +20,40 @@ def add_service_type():
     db.session.commit()
     
     return jsonify({'message': 'Service type added', 'service_type': service_type_schema.dump(service_type)}), 201
+
+@serviceType_bp.route('/<int:service_type_id>/assign_service_type/<int:ticket_id>', methods=['PUT'])
+@admin_required
+def assign_service_type_to_ticket(service_type_id, ticket_id):
+    
+    service_type = db.session.get(ServiceType, service_type_id)
+    ticket = db.session.get(ServiceTicket, ticket_id)
+    
+    if not service_type:
+        return jsonify({'message': 'Service type not found'}), 404
+    if not ticket:
+        return jsonify({'message': 'Service ticket not found'}), 404
+    
+    if service_type not in ticket.services:
+        ticket.services.append(service_type)
+        db.session.commit()
+        
+    return jsonify({'message': f'Service type {service_type_id} assigned to ticket {ticket_id}', 'ticket': service_ticket_schema.dump(ticket)})
+
+@serviceType_bp.route('/<int:service_type_id>/remove_service_type/<int:ticket_id>', methods=['PUT'])
+@admin_required
+def remove_service_type_from_ticket(service_type_id, ticket_id):
+    
+    service_type = db.session.get(ServiceType, service_type_id)
+    ticket = db.session.get(ServiceTicket, ticket_id)
+    
+    if not service_type or not ticket:
+        return jsonify({'message': 'Invalid ID(s)'}), 404
+    
+    if service_type in ticket.services:
+        ticket.services.remove(service_type)
+        db.session.commit()
+        
+    return jsonify({'message': f'Service type {service_type_id} remove from ticket {ticket_id}'})
 
 @serviceType_bp.route("/", methods=['GET'])
 def get_service_types():

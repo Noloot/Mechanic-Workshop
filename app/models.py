@@ -49,7 +49,7 @@ class Customer(Base):
     password: Mapped[str] = mapped_column(db.String(350), nullable=False)
     role: Mapped[str] = mapped_column(db.String(50), nullable=False)
     
-    cars: Mapped[List['Car']] = db.relationship(back_populates='customer')
+    cars: Mapped[List['Car']] = db.relationship(back_populates='customer', cascade="all, delete", passive_deletes=True)
     
 class Employee(Base):
     __tablename__ = 'employee'
@@ -75,7 +75,7 @@ class Car(Base):
     model_year: Mapped[int] = mapped_column()
     
 
-    customer_id: Mapped[int] = mapped_column(db.ForeignKey("customer.id"))
+    customer_id: Mapped[int] = mapped_column(db.ForeignKey("customer.id", ondelete="CASCADE"), nullable=False)
     customer: Mapped['Customer'] = db.relationship(back_populates='cars')
     
 class ServiceType(Base):
