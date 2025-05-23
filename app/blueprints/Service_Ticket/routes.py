@@ -7,7 +7,6 @@ from . import serviceTicket_bp
 from app.extensions import limiter, cache
 from app.utils.util import admin_required
 
-
 @serviceTicket_bp.route('/', methods=['GET'])
 @cache.cached(timeout=30)
 def get_tickets():

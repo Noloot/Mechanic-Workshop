@@ -8,6 +8,27 @@ from app.extensions import cache
 from app.utils.util import encode_token, admin_required
 from werkzeug.security import generate_password_hash, check_password_hash
 
+@employee_bp.route('/working_tickets', methods=['GET'])
+def tickets_working_on():
+    query = select(Employee)
+    mechanics = db.session.execute(query).scalars().all()
+    
+    mechanics.sort(key= lambda m: len(m.tickets), reverse=True)
+    
+    mechanics = [m for m in mechanics if m.tickets]
+    
+    result = [
+        {
+            "id": m.id,
+            "name": m.name,
+            "ticket_count": len(m.tickets),
+            "ticket_ids": [t.id for t in m.tickets]
+        }
+        for m in mechanics
+    ]
+    
+    return jsonify(result)
+
 @employee_bp.route('/login', methods=['POST'])
 def login():
     try:
