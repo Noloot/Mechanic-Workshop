@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from app.models import db, ServiceTicket
+from app.models import db, ServiceTicket, ServiceType
 from marshmallow import ValidationError
 from .schemas import service_ticket_schema, service_tickets_schema
 from sqlalchemy import select
@@ -39,12 +39,19 @@ def get_ticket(id):
 @limiter.limit("15 per hour")
 @admin_required
 def add_ticket():
+    data = request.get_json()
+    
+    service_type_ids = data.pop("service_type_ids", [])
+    
     try:
-        ticket = service_ticket_schema.load(request.json)
+        ticket = service_ticket_schema.load(data)
     except ValidationError as e:
         return jsonify(e.messages), 400
     
-    
+    if service_type_ids:
+        service_types = db.session.query(ServiceType).filter(ServiceType.id.in_(service_type_ids)).all()
+        ticket.services = service_types
+        
     db.session.add(ticket)
     db.session.commit()
     

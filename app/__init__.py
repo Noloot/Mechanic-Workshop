@@ -5,6 +5,7 @@ from app.blueprints.customers import customers_bp
 from app.blueprints.employees import employee_bp
 from app.blueprints.cars import cars_bp
 from app.blueprints.Service_Ticket import serviceTicket_bp
+from app.blueprints.service_type import serviceType_bp
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -20,5 +21,6 @@ def create_app(config_name):
     app.register_blueprint(employee_bp, url_prefix='/employees')
     app.register_blueprint(cars_bp, url_prefix='/cars')
     app.register_blueprint(serviceTicket_bp, url_prefix='/tickets')
+    app.register_blueprint(serviceType_bp, url_prefix='/service_types')
     
     return app

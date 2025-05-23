@@ -16,6 +16,13 @@ mechanic_ticket = db.Table(
     db.Column('service_ticket_id', db.ForeignKey('service_ticket.id'), primary_key=True)
 )
 
+ticket_service = db.Table(
+    'ticket_service',
+    Base.metadata,
+    db.Column('service_ticket_id', db.ForeignKey('service_ticket.id'), primary_key=True),
+    db.Column('service_type_id', db.ForeignKey('service_types.id'), primary_key=True)
+)
+
 class ServiceTicket(Base):
     __tablename__ = 'service_ticket'
     
@@ -25,11 +32,11 @@ class ServiceTicket(Base):
     car_id: Mapped[int] = mapped_column(db.ForeignKey('car.id'), nullable=False)
     VIN: Mapped[str] = mapped_column(db.String(220), nullable= False)
     car_issue:  Mapped[str] = mapped_column(db.String(500), nullable= True)
-    service_type: Mapped[str] = mapped_column(db.String(100), nullable=True)
     is_major_damage: Mapped[bool] = mapped_column(db.Boolean, default=False)
     
     employee: Mapped[List['Employee']] = db.relationship('Employee', secondary=mechanic_ticket, back_populates='tickets')
     car: Mapped['Car'] = db.relationship('Car', backref="owner", lazy=True)
+    services: Mapped[List['ServiceType']] = db.relationship('ServiceType', secondary=ticket_service, back_populates='tickets')
     
 class Customer(Base):
     __tablename__ = 'customer'
@@ -70,3 +77,13 @@ class Car(Base):
 
     customer_id: Mapped[int] = mapped_column(db.ForeignKey("customer.id"))
     customer: Mapped['Customer'] = db.relationship(back_populates='cars')
+    
+class ServiceType(Base):
+    __tablename__ = 'service_types'
+        
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(db.String(100), unique=True, nullable=False)
+    description: Mapped[str] = mapped_column(db.String(300), nullable=True)
+    price: Mapped[float] = mapped_column(db.Float(), nullable=False)
+    
+    tickets: Mapped[List['ServiceTicket']] = db.relationship('ServiceTicket', secondary=ticket_service, back_populates='services')
