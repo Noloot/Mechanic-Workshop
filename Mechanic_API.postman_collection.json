@@ -1072,6 +1072,180 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Service Type",
+			"item": [
+				{
+					"name": "Create Service Type",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc5OTgzNTIsImlhdCI6MTc0Nzk5NDc1Miwic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.nvSaFXRiPEO-H5ifSGavsctALkL9m5EVYt_nTFtvKGw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Air Filter\",\n    \"price\": 18.99\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/service_types",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"service_types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Services",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc5OTgzNTIsImlhdCI6MTc0Nzk5NDc1Miwic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.nvSaFXRiPEO-H5ifSGavsctALkL9m5EVYt_nTFtvKGw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Air Filter\",\n    \"price\": 18.99\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/service_types",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"service_types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Service Type",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc5OTgzNTIsImlhdCI6MTc0Nzk5NDc1Miwic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.nvSaFXRiPEO-H5ifSGavsctALkL9m5EVYt_nTFtvKGw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Air Filter\",\n    \"price\": 19.99\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/service_types/5",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"service_types",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Service Type",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc5OTgzNTIsImlhdCI6MTc0Nzk5NDc1Miwic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.nvSaFXRiPEO-H5ifSGavsctALkL9m5EVYt_nTFtvKGw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Air Filter\",\n    \"price\": 18.99\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/service_types/4",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"service_types",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
