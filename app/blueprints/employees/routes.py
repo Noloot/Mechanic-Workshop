@@ -55,12 +55,26 @@ def login():
         return jsonify({'message': 'Invalid email or password'}), 401
 
 @employee_bp.route('/', methods=['GET'])
-@cache.cached(timeout=30)
 def get_employees():
-    query = select(Employee)
-    result = db.session.execute(query).scalars().all()
-    return employees_schema.jsonify(result)
-
+    try:
+        page = int(request.args.get('page'))
+        per_page = int(request.args.get('per_page'))
+        offset = (page -1) * per_page
+        total = db.session.execute(select(Employee)).scalars().all()
+        total_count = len(total)
+        
+        query = select(Employee).offset(offset).limit(per_page)
+        employees = db.session.execute(query).scalars().all()
+        
+        return jsonify({
+            'page': page,
+            'per_page': per_page,
+            'total_employee': total_count,
+            'employees': employees_schema.dump(employees)
+        }), 200
+    except Exception as e:
+        return jsonify({'message': 'Error fetching Employees', 'error': str(e)}), 500
+        
 @employee_bp.route('/<int:id>', methods=['GET'])
 def get_employee(id):
     employee = db.session.get(Employee, id)

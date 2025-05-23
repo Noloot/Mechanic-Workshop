@@ -18,8 +18,24 @@ def search_car():
 
 @cars_bp.route('/', methods=['GET'])
 def get_cars():
-    cars = db.session.execute(select(Car)).scalars().all()
-    return cars_schema.jsonify(cars)
+    try:
+        page = int(request.args.get('page'))
+        per_page = int(request.args.get('per_page'))
+        offset = (page - 1) * per_page
+        total = db.session.execute(select(Car)).scalars().all()
+        total_count = len(total)
+        
+        query = select(Car).offset(offset).limit(per_page)
+        cars = db.session.execute(query).scalars().all()
+        
+        return jsonify({
+            'page': page,
+            'per_page': per_page,
+            'total_count': total_count,
+            'cars': cars_schema.dump(cars)
+        }), 200
+    except Exception as e:
+        return jsonify({'message': 'Error fetching Cars', 'error': str(e)}), 500
 
 @cars_bp.route('/<int:id>', methods=['GET'])
 def get_car(id):

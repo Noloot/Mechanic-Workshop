@@ -4,798 +4,1074 @@
 		"name": "Mechanic_API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "44586430",
-		"_collection_link": "https://marcqueztookes.postman.co/workspace/Mechanic-Workshop~4e31d716-b263-4860-8719-e2841997c471/collection/44586430-117484a8-f51a-4fca-9095-653d57db348d?action=share&source=collection_link&creator=44586430"
+		"_collection_link": "https://marcqueztookes.postman.co/workspace/4e31d716-b263-4860-8719-e2841997c471/collection/44586430-117484a8-f51a-4fca-9095-653d57db348d?action=share&source=collection_link&creator=44586430"
 	},
 	"item": [
 		{
-			"name": "Remove Mechanic from Ticket",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Michael Scoot\",\n    \"email\": \"MScoot@example.com\",\n    \"address\": \"234 Main St\",\n    \"phone\": \"222-333-4444\",\n    \"salary\": 60000,\n    \"password\": \"MScott96(\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Customer",
+			"item": [
+				{
+					"name": "Add Customer",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Jane Doe\",\n    \"email\": \"JDoe@example.com\",\n    \"address\": \"123 Main St\",\n    \"phone\": \"333-444-5555\",\n    \"password\": \"123\",\n    \"role\": \"customer\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/customers",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"customers"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/tickets/1/remove-mechanic/1",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"tickets",
-						"1",
-						"remove-mechanic",
-						"1"
-					]
+				{
+					"name": "Customer Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"JDoe@example.com\",\n    \"password\": \"123\",\n    \"role\": \"customer\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/customers/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"customers",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Customer Add Car",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc5NjQwMDQsImlhdCI6MTc0Nzk2MDQwNCwic3ViIjoiMSIsInJvbGUiOiJjdXN0b21lciJ9.B0nJ8pKdx3yaKw4oXu0Wzn9XXCzYMl2ZQq510utCNTY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"color\": \"black\",\n    \"make\": \"BMW\",\n    \"model\": \"M4\",\n    \"model_year\": 2025,\n    \"customer_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/customers/1/cars",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"customers",
+								"1",
+								"cars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Customers",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Michael Scoot\",\n    \"email\": \"MScoot@example.com\",\n    \"address\": \"234 Main St\",\n    \"phone\": \"222-333-4444\",\n    \"salary\": 60000,\n    \"password\": \"MScott96(\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/customers?page=1&per_page=10",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"customers"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Customers by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Michael Scoot\",\n    \"email\": \"MScoot@example.com\",\n    \"address\": \"234 Main St\",\n    \"phone\": \"222-333-4444\",\n    \"salary\": 60000,\n    \"password\": \"MScott96(\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/customers/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"customers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Customers Car Info",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/customers/1/cars",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"customers",
+								"1",
+								"cars"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Customer",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Jennifer Doe\",\n    \"email\": \"JDoe@example.com\",\n    \"address\": \"123 Main St\",\n    \"phone\": \"333-444-5555\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/customers/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"customers",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Customer",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Jennifer Doe\",\n    \"email\": \"JDoe@example.com\",\n    \"address\": \"123 Main St\",\n    \"phone\": \"333-444-5555\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/customers/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"customers",
+								"2"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Assign Mechanic from Ticket",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Michael Scoot\",\n    \"email\": \"MScoot@example.com\",\n    \"address\": \"234 Main St\",\n    \"phone\": \"222-333-4444\",\n    \"salary\": 60000,\n    \"password\": \"MScott96(\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Employee",
+			"item": [
+				{
+					"name": "Add Employee",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Robert Downy\",\n    \"email\": \"RDowny@example.com\",\n    \"address\": \"432 Main St\",\n    \"phone\": \"888-777-5555\",\n    \"salary\": \"100000\",\n    \"password\": \"1234\",\n    \"role\": \"mechanic\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/employees",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"employees"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/tickets/1/assign-mechanic/1",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"tickets",
-						"1",
-						"assign-mechanic",
-						"1"
-					]
+				{
+					"name": "Employee Login",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc5NjQwMDQsImlhdCI6MTc0Nzk2MDQwNCwic3ViIjoiMSIsInJvbGUiOiJjdXN0b21lciJ9.B0nJ8pKdx3yaKw4oXu0Wzn9XXCzYMl2ZQq510utCNTY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"RDowny@example.com\",\n    \"password\": \"1234\",\n    \"role\": \"mechanic\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/employees/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"employees",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Employee",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Jennifer Doe\",\n    \"email\": \"JDoe@example.com\",\n    \"address\": \"123 Main St\",\n    \"phone\": \"333-444-5555\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/employees?page=1&per_page=3",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"employees"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Employees by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Jennifer Doe\",\n    \"email\": \"JDoe@example.com\",\n    \"address\": \"123 Main St\",\n    \"phone\": \"333-444-5555\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/mechanics/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"mechanics",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mechanics Working On Tickets",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/employees/working_tickets",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"employees",
+								"working_tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Employee",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Robert Downy Jr\",\n    \"email\": \"RDownyJr@example.com\",\n    \"address\": \"432 Main St\",\n    \"phone\": \"888-777-5555\",\n    \"salary\": \"100000\",\n    \"password\": \"RDownyJr96(\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/mechanics/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"mechanics",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Employee",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Robert Downy Jr\",\n    \"email\": \"RDownyJr@example.com\",\n    \"address\": \"432 Main St\",\n    \"phone\": \"888-777-5555\",\n    \"salary\": \"100000\",\n    \"password\": \"RDownyJr96(\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/mechanics/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"mechanics",
+								"2"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Get Customers",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Michael Scoot\",\n    \"email\": \"MScoot@example.com\",\n    \"address\": \"234 Main St\",\n    \"phone\": \"222-333-4444\",\n    \"salary\": 60000,\n    \"password\": \"MScott96(\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Car",
+			"item": [
+				{
+					"name": "Add Car",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"color\": \"Red\",\n    \"make\": \"Ferrari\",\n    \"model\": \"SF90 Stradale\",\n    \"model_year\": 2025,\n    \"customer_id\": 1\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/cars",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"cars"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/customers",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"customers"
-					]
+				{
+					"name": "Get Cars",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Robert Downy Jr\",\n    \"email\": \"RDownyJr@example.com\",\n    \"address\": \"432 Main St\",\n    \"phone\": \"888-777-5555\",\n    \"salary\": \"100000\",\n    \"password\": \"RDownyJr96(\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/cars?page=1&per_page=3",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"cars"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cars by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Michael Scoot\",\n    \"email\": \"MScoot@example.com\",\n    \"address\": \"234 Main St\",\n    \"phone\": \"222-333-4444\",\n    \"salary\": 60000,\n    \"password\": \"MScott96(\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/cars/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"cars",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Car by Make",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/cars/search?make=b",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"cars",
+								"search"
+							],
+							"query": [
+								{
+									"key": "make",
+									"value": "b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Car",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"color\": \"Red\",\n    \"make\": \"Ferrari\",\n    \"model\": \"SF90 Stradale\",\n    \"model_year\": 2024,\n    \"customer_id\": 1\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/cars/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"cars",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Car",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"color\": \"Red\",\n    \"make\": \"Ferrari\",\n    \"model\": \"SF90 Stradale\",\n    \"model_year\": 2024,\n    \"customer_id\": 1\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/cars/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"cars",
+								"2"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Get Customers by ID",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Michael Scoot\",\n    \"email\": \"MScoot@example.com\",\n    \"address\": \"234 Main St\",\n    \"phone\": \"222-333-4444\",\n    \"salary\": 60000,\n    \"password\": \"MScott96(\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Tickets",
+			"item": [
+				{
+					"name": "Create Ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc5NjU5NTAsImlhdCI6MTc0Nzk2MjM1MCwic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.LP08BdFShGzGIuxRKZYChpp-1XQSCjZ_KvZDCSweUMI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"VIN\": \"234\",\n    \"car_issue\": \"Damage Front Door\",\n    \"customer_id\": 1,\n    \"service_date\": \"2025-05-20\",\n    \"service_type\": \"\",\n    \"is_major_damage\": \"True\",\n    \"car_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tickets",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tickets"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/customers/1",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"customers",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add Customer",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Jane Doe\",\n    \"email\": \"JDoe@example.com\",\n    \"address\": \"123 Main St\",\n    \"phone\": \"333-444-5555\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Assign Mechanic from Ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDc5NjU5NTAsImlhdCI6MTc0Nzk2MjM1MCwic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.LP08BdFShGzGIuxRKZYChpp-1XQSCjZ_KvZDCSweUMI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tickets/1/assign-mechanic/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tickets",
+								"1",
+								"assign-mechanic",
+								"1"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/customers",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"customers"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Customer",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Jennifer Doe\",\n    \"email\": \"JDoe@example.com\",\n    \"address\": \"123 Main St\",\n    \"phone\": \"333-444-5555\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Remove Mechanic from Ticket",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Michael Scoot\",\n    \"email\": \"MScoot@example.com\",\n    \"address\": \"234 Main St\",\n    \"phone\": \"222-333-4444\",\n    \"salary\": 60000,\n    \"password\": \"MScott96(\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tickets/1/remove-mechanic/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tickets",
+								"1",
+								"remove-mechanic",
+								"1"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/customers/2",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"customers",
-						"2"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Customer",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Jennifer Doe\",\n    \"email\": \"JDoe@example.com\",\n    \"address\": \"123 Main St\",\n    \"phone\": \"333-444-5555\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Update Ticket",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"VIN\": \"234\",\n    \"car_issue\": \"Blown out tire\",\n    \"customer_id\": 1,\n    \"service_date\": \"2025-05-19\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tickets/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tickets",
+								"2"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/customers/2",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"customers",
-						"2"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Employee",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Jennifer Doe\",\n    \"email\": \"JDoe@example.com\",\n    \"address\": \"123 Main St\",\n    \"phone\": \"333-444-5555\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Get Tickets",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Joe\",\n    \"email\": \"JJ@example.com\",\n    \"address\": \"234 Main St\",\n    \"phone\": \"111-222-3333\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tickets?page=1&per_page=3",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tickets"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "3"
+								}
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/mechanics",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"mechanics"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Employees by ID",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Jennifer Doe\",\n    \"email\": \"JDoe@example.com\",\n    \"address\": \"123 Main St\",\n    \"phone\": \"333-444-5555\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Get Tickets by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Robert Downy Jr\",\n    \"email\": \"RDownyJr@example.com\",\n    \"address\": \"432 Main St\",\n    \"phone\": \"888-777-5555\",\n    \"salary\": \"100000\",\n    \"password\": \"RDownyJr96(\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tickets/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tickets",
+								"1"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/mechanics/1",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"mechanics",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add Employee",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Robert Downy\",\n    \"email\": \"RDowny@example.com\",\n    \"address\": \"432 Main St\",\n    \"phone\": \"888-777-5555\",\n    \"salary\": \"100000\",\n    \"password\": \"RDowny96(\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Delete Ticket",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"VIN\": \"234\",\n    \"car_issue\": \"Blown out tire\",\n    \"customer_id\": 1,\n    \"service_date\": \"2025-05-19\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tickets/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tickets",
+								"2"
+							]
 						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/mechanics",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"mechanics"
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Employee",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Robert Downy Jr\",\n    \"email\": \"RDownyJr@example.com\",\n    \"address\": \"432 Main St\",\n    \"phone\": \"888-777-5555\",\n    \"salary\": \"100000\",\n    \"password\": \"RDownyJr96(\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/mechanics/2",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"mechanics",
-						"2"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Employee",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Robert Downy Jr\",\n    \"email\": \"RDownyJr@example.com\",\n    \"address\": \"432 Main St\",\n    \"phone\": \"888-777-5555\",\n    \"salary\": \"100000\",\n    \"password\": \"RDownyJr96(\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/mechanics/2",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"mechanics",
-						"2"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Cars",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Robert Downy Jr\",\n    \"email\": \"RDownyJr@example.com\",\n    \"address\": \"432 Main St\",\n    \"phone\": \"888-777-5555\",\n    \"salary\": \"100000\",\n    \"password\": \"RDownyJr96(\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/cars",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"cars"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Cars by ID",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Michael Scoot\",\n    \"email\": \"MScoot@example.com\",\n    \"address\": \"234 Main St\",\n    \"phone\": \"222-333-4444\",\n    \"salary\": 60000,\n    \"password\": \"MScott96(\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/cars/1",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"cars",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add Car",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"color\": \"Red\",\n    \"make\": \"Ferrari\",\n    \"model\": \"SF90 Stradale\",\n    \"model_year\": 2025,\n    \"customer_id\": 1\n\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/cars",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"cars"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Car",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"color\": \"Red\",\n    \"make\": \"Ferrari\",\n    \"model\": \"SF90 Stradale\",\n    \"model_year\": 2024,\n    \"customer_id\": 1\n\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/cars/2",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"cars",
-						"2"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Car",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"color\": \"Red\",\n    \"make\": \"Ferrari\",\n    \"model\": \"SF90 Stradale\",\n    \"model_year\": 2024,\n    \"customer_id\": 1\n\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/cars/2",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"cars",
-						"2"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Tickets",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"color\": \"Red\",\n    \"make\": \"Ferrari\",\n    \"model\": \"SF90 Stradale\",\n    \"model_year\": 2024,\n    \"customer_id\": 1\n\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/tickets",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"tickets"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Tickets by ID",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"Robert Downy Jr\",\n    \"email\": \"RDownyJr@example.com\",\n    \"address\": \"432 Main St\",\n    \"phone\": \"888-777-5555\",\n    \"salary\": \"100000\",\n    \"password\": \"RDownyJr96(\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/tickets/1",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"tickets",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create Ticket",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"VIN\": \"234\",\n    \"car_issue\": \"Blown out tire\",\n    \"customer_id\": 1,\n    \"service_date\": \"2025-05-20\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/tickets",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"tickets"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Ticket",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"VIN\": \"234\",\n    \"car_issue\": \"Blown out tire\",\n    \"customer_id\": 1,\n    \"service_date\": \"2025-05-19\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/tickets/2",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"tickets",
-						"2"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Ticket",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"VIN\": \"234\",\n    \"car_issue\": \"Blown out tire\",\n    \"customer_id\": 1,\n    \"service_date\": \"2025-05-19\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/tickets/2",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"tickets",
-						"2"
-					]
-				}
-			},
-			"response": []
+			]
 		}
 	]
 }

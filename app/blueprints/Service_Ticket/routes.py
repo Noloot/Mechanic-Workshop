@@ -8,10 +8,25 @@ from app.extensions import limiter, cache
 from app.utils.util import admin_required
 
 @serviceTicket_bp.route('/', methods=['GET'])
-@cache.cached(timeout=30)
 def get_tickets():
-    tickets = db.session.execute(select(ServiceTicket)).scalars().all()
-    return service_tickets_schema.jsonify(tickets)
+    try:
+        page = int(request.args.get('page'))
+        per_page = int(request.args.get('per_page'))
+        offset = (page - 1) * per_page
+        total = db.session.execute(select(ServiceTicket)).scalars().all()
+        total_count = len(total)
+        
+        query = select(ServiceTicket).offset(offset).limit(per_page)
+        tickets = db.session.execute(query).scalars().all()
+        
+        return jsonify({
+            'page': page,
+            'per_page': per_page,
+            'total_tickets': total_count,
+            'tickets': service_tickets_schema.dump(tickets)
+        }), 200
+    except Exception as e:
+        return jsonify({'message': 'Error fetching Tickets', 'error': str(e)}), 500
 
 @serviceTicket_bp.route('/<int:id>', methods=['GET'])
 def get_ticket(id):

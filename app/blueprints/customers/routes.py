@@ -35,6 +35,7 @@ def login():
         return jsonify({'message': 'Invalid email or password'}), 401
 
 @customers_bp.route("/", methods=['POST'])
+@cache.cached(timeout=30)
 @limiter.limit("15 per day", override_defaults=True)
 def add_customer():
     try:
@@ -52,6 +53,7 @@ def add_customer():
                     "customer": customer_schema.dump(new_customer)}), 201
 
 @customers_bp.route("/<int:customer_id>/cars", methods=['POST'])
+@cache.cached(timeout=30)
 @token_required
 def add_car_for_customer(customer_id):
     if request.user_id != customer_id:
@@ -82,17 +84,25 @@ def get_customer_cars(customer_id):
     return cars_schema.jsonify(customer.cars), 200
 
 @customers_bp.route("/", methods=['GET'])
-@cache.cached(timeout=30)
 def get_customers():
-    
-    page = int(request.args.get('page', 1))
-    limit = int(request.args.get('limit', 10))
-    offset = (page - 1) * limit
-    
-    query = select(Customer).offset(offset).limit(limit)
-    result = db.session.execute(query).scalars().all()
-    
-    return customers_schema.jsonify(result)
+    try:
+        page = int(request.args.get('page'))
+        per_page = int(request.args.get('per_page'))
+        offset = (page - 1) * per_page
+        total = db.session.execute(select(Customer)).scalars().all()
+        total_count = len(total)
+            
+        query = select(Customer).offset(offset).limit(per_page)
+        customers = db.session.execute(query).scalars().all()
+        
+        return jsonify({
+            'page': page,
+            'per_page': per_page,
+            'total_customers': total_count,
+            "customers": customers_schema.dump(customers)
+        }), 200
+    except Exception as e:
+        return jsonify({'message': 'Error fetching Customers', 'error': str(e)}), 500
 
 @customers_bp.route("/<int:id>", methods=['GET'])
 def get_customer(id):
