@@ -74,7 +74,6 @@ def add_car_for_customer(customer_id):
     return jsonify({'message': 'Car added successfully for customer', 'car': car_schema.dump(car)}), 201
 
 @customers_bp.route("/<int:customer_id>/cars", methods=['GET'])
-@cache.cached(timeout=30)
 def get_customer_cars(customer_id):
     customer = db.session.get(Customer, customer_id)
     if not customer:

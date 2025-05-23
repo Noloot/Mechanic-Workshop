@@ -6,12 +6,6 @@ from sqlalchemy import select
 from . import serviceType_bp
 from app.utils.util import admin_required
 
-@serviceType_bp.route("/", methods=['GET'])
-def get_service_types():
-    service_types = db.session.execute(select(ServiceType)).scalars().all()
-    print("DEBUG: Retrieved service types:", service_types)
-    return jsonify(service_types_schema.dump(service_types)), 200
-
 @serviceType_bp.route("/", methods=['POST'])
 @admin_required
 def add_service_type():
@@ -25,6 +19,13 @@ def add_service_type():
     db.session.commit()
     
     return jsonify({'message': 'Service type added', 'service_type': service_type_schema.dump(service_type)}), 201
+
+@serviceType_bp.route("/", methods=['GET'])
+def get_service_types():
+    service_types = db.session.execute(select(ServiceType)).scalars().all()
+    print("DEBUG: Retrieved service types:", service_types)
+    return jsonify(service_types_schema.dump(service_types)), 200
+
 
 @serviceType_bp.route('/<int:id>', methods=['PUT'])
 @admin_required

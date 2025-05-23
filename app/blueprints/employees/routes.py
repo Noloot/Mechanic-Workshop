@@ -8,26 +8,18 @@ from app.extensions import cache
 from app.utils.util import encode_token, admin_required
 from werkzeug.security import generate_password_hash, check_password_hash
 
-@employee_bp.route('/working_tickets', methods=['GET'])
-def tickets_working_on():
-    query = select(Employee)
-    mechanics = db.session.execute(query).scalars().all()
+@employee_bp.route('/', methods=['POST'])
+def add_employee():
+    try:
+        employee = employee_schema.load(request.json)
+    except ValidationError as e:
+        return jsonify(e.messages), 404
     
-    mechanics.sort(key= lambda m: len(m.tickets), reverse=True)
+    employee.password = generate_password_hash(employee.password)
     
-    mechanics = [m for m in mechanics if m.tickets]
-    
-    result = [
-        {
-            "id": m.id,
-            "name": m.name,
-            "ticket_count": len(m.tickets),
-            "ticket_ids": [t.id for t in m.tickets]
-        }
-        for m in mechanics
-    ]
-    
-    return jsonify(result)
+    db.session.add(employee)
+    db.session.commit()
+    return jsonify({'message': 'Employee added', 'employee': employee_schema.dump(employee)}), 201
 
 @employee_bp.route('/login', methods=['POST'])
 def login():
@@ -53,6 +45,27 @@ def login():
         return jsonify(response), 200
     else:
         return jsonify({'message': 'Invalid email or password'}), 401
+    
+@employee_bp.route('/working_tickets', methods=['GET'])
+def tickets_working_on():
+    query = select(Employee)
+    mechanics = db.session.execute(query).scalars().all()
+    
+    mechanics.sort(key= lambda m: len(m.tickets), reverse=True)
+    
+    mechanics = [m for m in mechanics if m.tickets]
+    
+    result = [
+        {
+            "id": m.id,
+            "name": m.name,
+            "ticket_count": len(m.tickets),
+            "ticket_ids": [t.id for t in m.tickets]
+        }
+        for m in mechanics
+    ]
+    
+    return jsonify(result)
 
 @employee_bp.route('/', methods=['GET'])
 def get_employees():
@@ -82,19 +95,6 @@ def get_employee(id):
         return jsonify({'message': 'Employee not found'}), 404
     return employee_schema.jsonify(employee)
 
-
-@employee_bp.route('/', methods=['POST'])
-def add_employee():
-    try:
-        employee = employee_schema.load(request.json)
-    except ValidationError as e:
-        return jsonify(e.messages), 404
-    
-    employee.password = generate_password_hash(employee.password)
-    
-    db.session.add(employee)
-    db.session.commit()
-    return jsonify({'message': 'Employee added', 'employee': employee_schema.dump(employee)}), 201
 
 @employee_bp.route('/<int:id>', methods=['PUT'])
 @admin_required

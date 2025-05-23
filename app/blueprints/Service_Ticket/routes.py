@@ -7,6 +7,34 @@ from . import serviceTicket_bp
 from app.extensions import limiter, cache
 from app.utils.util import admin_required
 
+@serviceTicket_bp.route('/', methods=['POST'])
+@limiter.limit("15 per hour")
+@admin_required
+def add_ticket():
+    data = request.get_json()
+    
+    service_type_ids = data.pop("service_type_ids", [])
+    
+    try:
+        ticket = service_ticket_schema.load(data)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    
+    if service_type_ids:
+        service_types = db.session.query(ServiceType).filter(ServiceType.id.in_(service_type_ids)).all()
+        ticket.services = service_types
+        
+    db.session.add(ticket)
+    db.session.commit()
+    
+    if ticket.is_major_damage:
+        
+        print(f"Simulated sending ticket {ticket.id} to sister site")
+        
+        return jsonify({'message': 'Ticket created and sent to sister site', 'ticket': service_ticket_schema.dump(ticket)}), 201
+    
+    return jsonify({'message': 'Ticekt created', 'ticket': service_ticket_schema.dump(ticket)}), 201
+
 @serviceTicket_bp.route('/', methods=['GET'])
 def get_tickets():
     try:
@@ -35,33 +63,6 @@ def get_ticket(id):
         return jsonify({'message': 'Ticket not found'})
     return service_ticket_schema.jsonify(ticket)
 
-@serviceTicket_bp.route('/', methods=['POST'])
-@limiter.limit("15 per hour")
-@admin_required
-def add_ticket():
-    data = request.get_json()
-    
-    service_type_ids = data.pop("service_type_ids", [])
-    
-    try:
-        ticket = service_ticket_schema.load(data)
-    except ValidationError as e:
-        return jsonify(e.messages), 400
-    
-    if service_type_ids:
-        service_types = db.session.query(ServiceType).filter(ServiceType.id.in_(service_type_ids)).all()
-        ticket.services = service_types
-        
-    db.session.add(ticket)
-    db.session.commit()
-    
-    if ticket.is_major_damage:
-        
-        print(f"Simulated sending ticket {ticket.id} to sister site")
-        
-        return jsonify({'message': 'Ticket created and sent to sister site', 'ticket': service_ticket_schema.dump(ticket)}), 201
-    
-    return jsonify({'message': 'Ticekt created', 'ticket': service_ticket_schema.dump(ticket)}), 201
 
 @serviceTicket_bp.route('/<int:ticket_id>/assign-mechanic/<int:employee_id>', methods=['PUT'])
 @limiter.exempt
