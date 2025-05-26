@@ -113,6 +113,7 @@ def get_customer(id):
     return customer_schema.jsonify(result)
 
 @customers_bp.route('/<int:id>', methods=['PUT'])
+@token_required
 def update_customer(id):
     customer = db.session.get(Customer, id)
     

@@ -74,7 +74,6 @@ paths:
               email: JDoe@example.com
               phone: 111-222-3333
               address: 123 Main St
-              password: "*******"
               role: customer
 
     get:
@@ -102,11 +101,91 @@ paths:
                   email: JDoe@example.com
                   phone: "111-222-3333"
                   address: 123 Main St
-                  password: "******"
                   role: customer
               page: 1
               per_page: 10
               total_customers: 2
+
+  /customers/{id}:
+
+    put:
+      tags:
+        - Customers
+      summary: "Endpoint to update a customer"
+      description: "Endpoint to update a customer, this is a token authenticated route, and the user must be logged in to update their account"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the customer to update"
+        - in: body
+          name: body
+          description: "Information required to update a Customer"
+          required: true
+          schema:
+            $ref: "#/definitions/UpdateCustomerPayload"
+      responses:
+        200:
+          description: "Successfully Updated Customer"
+          schema:
+            $ref: "#/definitions/UpdateCustomerResponse"
+          examples:
+            application/json:
+              id: 1
+              name: "Dohn Joe"
+              email: "dohnj@example.com"
+              phone: "111-222-3333"
+              address: "321 Main St"
+              role: "customer"
+        401:
+          description: Unauthorized - Missing or invalid token
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Not allowed to perform this action
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Customer not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+        - Customers
+      summary: "Endpoint to delete a customer"
+      description: "Endpoint to delete a customer. Requires token authentication, customer must be logged in to delete their account"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the customer to delete"
+      responses:
+        200:
+          description: "Successfully Deleted Customer"
+          schema:
+            $ref: "#/definitions/DeleteCustomerResponse"
+          examples:
+            application/json:
+              message: "successfully deleted customer <customer_id>"
+        401:
+          description: Unauthorized - Missing or invalid token
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Not allowed to perform this action
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Customer not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 
 definitions: 
   CustomerLoginCredentials:
@@ -183,8 +262,6 @@ definitions:
         type: "string"
       address:
         type: "string"
-      password:
-        type: "string"
       role:
         type: "string"
 
@@ -203,11 +280,7 @@ definitions:
         type: "integer"
 
   UpdateCustomerPayload:
-    type: "object"
-    required:
-      - customer
-    properties:
-      customer: 
+    allOf:
         $ref: "#/definitions/CreateCustomerResponse"
 
   UpdateCustomerResponse:
@@ -217,3 +290,9 @@ definitions:
         type: "integer"
       customer:
         $ref: "#/definitions/CreateCustomerResponse"
+
+  DeleteCustomerResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
