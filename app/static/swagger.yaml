@@ -21,6 +21,12 @@ securityDefinitions:
     type: apiKey
     name: Authorization
     in: header
+    description: |
+      Token Required!
+      Please enter your JWT token **with `Bearer` prefix** like:
+      ```
+      Bearer "JWT TOKEN"
+      ```
 
 paths: 
   /customers/login:
@@ -129,7 +135,7 @@ paths:
           required: true
           type: integer
           description: "ID of the customer to retrieve"
-      response:
+      responses:
         200:
           description: "Customer retrieved successfully"
           schema: 
@@ -218,6 +224,52 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  /customers/{id}/cars:
+    post:
+      tags:
+        - Customer Cars
+      summary: "Endpoint for customer to add a car."
+      description: "Endpoint for customer to add a car. Requires token authentication, customer must be logged in to add a car to their account"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "This route validates that the customer_id in the payload matches the authenticated token’s sub field"
+        - in: body
+          name: body
+          description: "Information needed to add a car as a customer"
+          required: true
+          schema:
+            $ref: "#/definitions/CreateCustomerCarPayload"
+      responses:
+        200:
+          description: "Car added successfully"
+          schema:
+            $ref: "#/definitions/CreateCustomerCarPayload"
+          examples:
+            application/json:
+              color: "black"
+              customer_id: 4
+              id: 2
+              make: "BMW"
+              model: "M4"
+              model_year: 2025
+        400:
+          description: "Validation Error missing information to create a car"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Not allowed to perform this action
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Customer not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
 definitions: 
   CustomerLoginCredentials:
     type: "object"
@@ -279,6 +331,7 @@ definitions:
       role:
         type: "string"
         description: "Identifies the user as a customer"
+
   
   CreateCustomerResponse:
     type: "object"
@@ -312,7 +365,7 @@ definitions:
 
   UpdateCustomerPayload:
     allOf:
-        $ref: "#/definitions/CreateCustomerResponse"
+      - $ref: "#/definitions/CreateCustomerResponse"
 
   UpdateCustomerResponse:
     type: "object"
@@ -327,3 +380,28 @@ definitions:
     properties:
       message:
         type: "string"
+
+  CreateCustomerCarPayload:
+    type: "object"
+    required:
+      - color
+      - make
+      - model
+      - model_year
+      - customer_id
+    properties:
+      color:
+        type: "string"
+        description: "Color of the car customer is adding"
+      make:
+        type: "string"
+        description: "The brand of the car (e.g. Kia, BMW, Toyota)"
+      model:
+        type: "string"
+        description: "The model name of the car (e.g. Forte, M4, Camry)"
+      model_year:
+        type: "integer"
+        description: "The year of the car when it was made"
+      customer_id:
+        type: "integer"
+        description: "The ID of the customer you are adding to must be the same as the customer logged in"
