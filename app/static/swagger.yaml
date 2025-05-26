@@ -80,7 +80,18 @@ paths:
       tags:
         - Customers
       summary: "Returns all Customers"
-      description: "Endpoint to retrieve a list of all customers."
+      description: "Returns a paginated list of all customers."
+      parameters:
+        - name: page
+          in: query
+          type: integer
+          required: false
+          description: "Page number (default: 1)"
+        - name: per_page
+          in: query
+          type: integer
+          required: false
+          description: "Number of results per page (default: 10)"
       responses:
         200:
           description: "Retrieved Customers Successfully"
@@ -107,6 +118,26 @@ paths:
               total_customers: 2
 
   /customers/{id}:
+
+    get:
+      tags:
+        - Customers
+      summary: "Retrieve a single customer by ID"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the customer to retrieve"
+      response:
+        200:
+          description: "Customer retrieved successfully"
+          schema: 
+            $ref: "#/definitions/CreateCustomerResponse"
+        404:
+          description: Customer not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 
     put:
       tags:

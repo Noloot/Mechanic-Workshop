@@ -84,8 +84,8 @@ def get_customer_cars(customer_id):
 @customers_bp.route("/", methods=['GET'])
 def get_customers():
     try:
-        page = int(request.args.get('page'))
-        per_page = int(request.args.get('per_page'))
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 10))
         offset = (page - 1) * per_page
         total = db.session.execute(select(Customer)).scalars().all()
         total_count = len(total)
