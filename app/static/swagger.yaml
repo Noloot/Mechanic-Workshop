@@ -1,0 +1,219 @@
+
+
+swagger: '2.0'
+info:
+  title: "Mechanic API"
+  description: "This API is used to create, update, and delete information for a mechanic shop"
+  version: "1.0.0"
+
+host: "127.0.0.1:5000"
+schemes:
+  - http
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+
+paths: 
+  /customers/login:
+    post:
+      tags:
+        - Customers
+      summary: "login endpoint, (generates token)"
+      description: "Validates customer credentials, generates and return a member specific token"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Login Credentials
+          required: true
+          schema:
+            $ref: "#/definitions/CustomerLoginCredentials"
+      responses:
+        200:
+          description: Successful login
+          schema:
+            $ref: "#/definitions/CustomerLoginResponse"
+        401:
+          description: Unauthorized - Invalid credentials
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  
+  /customers:
+    post:
+      tags:
+        - Customers
+      summary: "Endpoint to create a new user."
+      description: "Endpoint to create a new customer in our mechanic shop system. emails must be unique"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/CreateCustomerPayload"
+      responses:
+        201:
+          description: "New Customer added successfully"
+          schema:
+            $ref: "#/definitions/CreateCustomerResponse"
+          examples:
+            application/json:
+              id: 1
+              name: John Doe
+              email: JDoe@example.com
+              phone: 111-222-3333
+              address: 123 Main St
+              password: "*******"
+              role: customer
+
+    get:
+      tags:
+        - Customers
+      summary: "Returns all Customers"
+      description: "Endpoint to retrieve a list of all customers."
+      responses:
+        200:
+          description: "Retrieved Customers Successfully"
+          schema:
+            $ref: "#/definitions/AllCustomers"
+          examples:
+            application/json:
+              customers:
+                - id: 2
+                  name: Michael Doe
+                  email: MDoe@example.com
+                  phone: "333-444-2222"
+                  address: 234 Main St
+                  password: "*******"
+                  role: customer
+                - id: 3
+                  name: John Doe
+                  email: JDoe@example.com
+                  phone: "111-222-3333"
+                  address: 123 Main St
+                  password: "******"
+                  role: customer
+              page: 1
+              per_page: 10
+              total_customers: 2
+
+definitions: 
+  CustomerLoginCredentials:
+    type: "object"
+    required:
+      - email
+      - password
+    properties:
+      email:
+        type: "string"
+        description: "User's email address"
+      password:
+        type: "string"
+        description: "User's password"
+
+  CustomerLoginResponse:
+    type: "object"
+    properties:
+      Status:
+        type: "string"
+        description: "Status of the login attempt"
+      auth_token:
+        type: "string"
+        description: "JWT access token"
+      message:
+        type: "string"
+        description: "Response message"
+
+  ErrorResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+
+  CreateCustomerPayload:
+    type: "object"
+    required:
+      - name
+      - email
+      - phone
+      - address
+      - password
+      - role
+    properties:
+      name:
+        type: "string"
+        description: "Customer's full name"
+      email:
+        type: "string"
+        description: "Customer's email address"
+      phone:
+        type: "string"
+        description: "Customer's phone number(e.g. 222-333-4444)"
+      address:
+        type: "string"
+        description: "Customer's home address"
+      password:
+        type: "string"
+        description: "Customer-created password"
+      role:
+        type: "string"
+        description: "Identifies the user as a customer"
+  
+  CreateCustomerResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      email:
+        type: "string"
+      phone:
+        type: "string"
+      address:
+        type: "string"
+      password:
+        type: "string"
+      role:
+        type: "string"
+
+  AllCustomers:
+    type: "object"
+    properties:
+      customers:
+        type: "array"
+        items:
+          $ref: "#/definitions/CreateCustomerResponse"
+      page:
+        type: "integer"
+      per_page:
+        type: "integer"
+      total_customers:
+        type: "integer"
+
+  UpdateCustomerPayload:
+    type: "object"
+    required:
+      - customer
+    properties:
+      customer: 
+        $ref: "#/definitions/CreateCustomerResponse"
+
+  UpdateCustomerResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      customer:
+        $ref: "#/definitions/CreateCustomerResponse"
