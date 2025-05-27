@@ -55,6 +55,33 @@ paths:
           description: Unauthorized - Invalid credentials
           schema:
             $ref: "#/definitions/ErrorResponse"
+
+  /employees/login:
+    post:
+      tags:
+        - Employee
+      summary: "login endpoint for employees, (generates token)"
+      description: "Validates employee credentials, generates and return a employee specific token"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Login Credentials for employee's
+          required: true
+          schema:
+            $ref: "#/definitions/EmployeeLoginCredentials"
+      responses:
+        200:
+          description: Successful login
+          schema:
+            $ref: "#/definitions/EmployeeLoginResponse"
+        401:
+          description: Unauthorized - Invalid credentials
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   
   /customers:
     post:
@@ -300,6 +327,7 @@ definitions:
     required:
       - email
       - password
+      - role
     properties:
       email:
         type: "string"
@@ -307,6 +335,9 @@ definitions:
       password:
         type: "string"
         description: "User's password"
+      role:
+        type: "string"
+        description: "Specify's as customer"
 
   CustomerLoginResponse:
     type: "object"
@@ -356,7 +387,6 @@ definitions:
         type: "string"
         description: "Identifies the user as a customer"
 
-  
   CreateCustomerResponse:
     type: "object"
     properties:
@@ -429,3 +459,33 @@ definitions:
       customer_id:
         type: "integer"
         description: "The ID of the customer you are adding to must be the same as the customer logged in"
+  
+  EmployeeLoginCredentials:
+    type: "object"
+    required:
+      - email
+      - password 
+      - role
+    properties:
+      email: 
+        type: "string"
+        description: "Employee's email address"
+      password:
+        type: "string"
+        description: "Employee's password"
+      role:
+        type: "string"
+        description: "Role of the employee gives certain permissions to different actions in the system (e.g. creating a ticket)"
+
+  EmployeeLoginResponse:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+        description: "Status of the login attempt"
+      auth_token:
+        type: "string"
+        description: "JWT access token"
+      message:
+        type: "string"
+        description: "Response message"
