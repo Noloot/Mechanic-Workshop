@@ -270,6 +270,30 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+    get:
+      tags:
+        - Customer Cars
+      summary: "Get all cars for a specific customer"
+      description: "Returns a list of all cars associated with the given customer ID"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "the ID of the customer whose cars are being retrieved"
+      responses:
+        200:
+          description: "Successfully retrieved cars for the customer"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/CreateCustomerCarPayload"
+        404:
+          description: Customer not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+
 definitions: 
   CustomerLoginCredentials:
     type: "object"
