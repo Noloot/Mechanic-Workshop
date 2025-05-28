@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from app.models import db, ServiceTicket, ServiceType
 from marshmallow import ValidationError
-from .schemas import service_ticket_schema, service_tickets_schema
+from .schemas import service_ticket_schema, service_tickets_schema, service_ticket_create_schema
 from sqlalchemy import select
 from . import serviceTicket_bp
 from app.extensions import limiter, cache
@@ -16,12 +16,22 @@ def add_ticket():
     service_type_ids = data.pop("service_type_ids", [])
     
     try:
-        ticket = service_ticket_schema.load(data)
+        ticket = service_ticket_create_schema.load(data)
     except ValidationError as e:
         return jsonify(e.messages), 400
     
     if service_type_ids:
         service_types = db.session.query(ServiceType).filter(ServiceType.id.in_(service_type_ids)).all()
+        found_ids = {s.id for s in service_types}
+        requested_ids = set(service_type_ids)
+        
+        missing_ids = requested_ids - found_ids
+        if missing_ids:
+            return jsonify({
+                'message': 'Invalid service_type_ids',
+                'invalid_ids': list(missing_ids)
+            }), 400
+            
         ticket.services = service_types
         
     db.session.add(ticket)

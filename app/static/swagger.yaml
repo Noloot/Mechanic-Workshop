@@ -82,7 +82,7 @@ paths:
         404:
           description: "Customer field missing"
           schema:
-            $ref: "#definitions/ErrorResponse"
+            $ref: "#/definitions/ErrorResponse"
 
     get:
       tags:
@@ -394,7 +394,7 @@ paths:
                   salary: 100000
               page: 1
               per_page: 10
-              total_employee: 3
+              total_employees: 3
 
   /employees/working_tickets:
     get:
@@ -538,6 +538,97 @@ paths:
             $ref: "#/definitions/ErrorResponse"
         404:
           description: Employee not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /tickets:
+    post:
+      tags:
+        - Service Tickets
+      summary: "Create a new service ticket"
+      description:
+        Creates a new service ticket in the system. Requires admin authentication and supports assigning multiple service types.
+        If `is_major_damage` is true, the ticket will also be sent to a sister site.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: body
+          name: body
+          description: JSON payload to create the service ticket (with optional service_type_ids array)
+          required: true
+          schema:
+            type: object
+            required:
+              - service_date
+              - customer_id
+              - car_id
+              - VIN
+              - car_issue
+              - is_major_damage
+            properties:
+              service_date:
+                type: string
+                format: date
+                example: "2025-05-25"
+              customer_id:
+                type: integer
+              car_id:
+                type: integer
+              VIN:
+                type: string
+                description: "The vehicle identification number"
+              car_issue:
+                type: string
+                description: "The issue reported with the car"
+              is_major_damage:
+                type: boolean
+              service_type_ids:
+                type: array
+                items:
+                  type: integer
+                description: List of service type ID's to associate with the ticket
+      responses:
+        201:
+          description: "Successfully created the ticket"
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              ticket:
+                $ref: "#/definitions/ServiceTicket"
+          examples:
+            application/json:
+              message: "Ticket created"
+              ticket:
+                id: 10
+                service_date: "2025-05-25"
+                customer_id: 1
+                car_id: 2
+                VIN: "1HGCM82633A004352"
+                car_issue: "Brakes not working"
+                is_major_damage: false
+                services:
+                  - id: 1
+                    name: "Oil Change"
+        400:
+          description: Bad Request - Validation Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: Unauthorized - Token missing or invalid
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Admin access required
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500:
+          description: Internal Server Error
           schema:
             $ref: "#/definitions/ErrorResponse"
 
@@ -794,3 +885,32 @@ definitions:
     properties:
       message:
         type: "string"
+
+  ServiceTicket:
+    type: object
+    properties:
+      VIN:
+        type: string
+      car_issue:
+        type: string
+      service_date:
+        type: string
+        format: date
+      customer_id:
+        type: integer
+      car_id:
+        type: integer
+      is_major_damage:
+        type: boolean
+      services:
+        type: array
+        items:
+          $ref: "#/definitions/ServiceType"
+
+  ServiceType:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
