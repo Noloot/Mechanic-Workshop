@@ -441,6 +441,72 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  /employees/{id}:
+    get:
+      tags:
+        - Employees
+      summary: "Retrieve a single employee by ID"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the employee to retrieve"
+      responses:
+        200:
+          description: "Employee retrieved successfully"
+          schema:
+            $ref: "#/definitions/CreateEmployeeResponse"
+        404:
+          description: Employee not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    put:
+      tags:
+        - Employees
+      summary: "Endpoint to update a employee"
+      description: "Endpoint to update a employee, this is a token authenticated route, and the user must be logged in to update their account"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the employee to update"
+        - in: body
+          name: body
+          description: "Information required to update a Employee"
+          required: true
+          schema:
+            $ref: "#/definitions/UpdateEmployeePayload"
+      responses:
+        200:
+          description: "Successfully Updated Employee"
+          schema:
+            $ref: "#/definitions/UpdateEmployeeResponse"
+          examples:
+            application/json:
+              id: 1
+              name: "Rob Down"
+              email: "dobr@example.com"
+              phone: "111-222-3333"
+              role: "mechanic"
+              salary: 1000000
+        401:
+          description: Unauthorized - Missing or Invalid token
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Not allowed to perform this action
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Employee not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
 definitions:
   CustomerLoginCredentials:
     type: "object"
@@ -654,6 +720,8 @@ definitions:
         type: "string"
       phone:
         type: "string"
+      password:
+        type: "string"
       address:
         type: "string"
       role:
@@ -674,3 +742,15 @@ definitions:
         type: "integer"
       total_employees:
         type: "integer"
+
+  UpdateEmployeePayload:
+    allOf:
+      - $ref: "#/definitions/CreateEmployeeResponse"
+
+  UpdateEmployeeResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      employee:
+        $ref: "#/definitions/CreateEmployeeResponse"
