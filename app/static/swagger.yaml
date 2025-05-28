@@ -507,6 +507,40 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+    delete:
+      tags:
+        - Employees
+      summary: "Endpoint to delete an Employee"
+      description: "Endpoint to delete a employee. Requires token authentication, employee must be loggen in to delete their account"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the employee to delete"
+      responses:
+        200:
+          description: "Successfully Deleted Employee"
+          schema:
+            $ref: "#/definitions/DeleteEmployeeResponse"
+          examples:
+            application/json:
+              message: "Successfully delete employee <employee_id>"
+        401:
+          description: Unauthorized - Missing or invalid token
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Not allowed to perform this action
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Employee not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
 definitions:
   CustomerLoginCredentials:
     type: "object"
@@ -754,3 +788,9 @@ definitions:
         type: "integer"
       employee:
         $ref: "#/definitions/CreateEmployeeResponse"
+
+  DeleteEmployeeResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
