@@ -56,33 +56,6 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
-  /employees/login:
-    post:
-      tags:
-        - Employee
-      summary: "login endpoint for employees, (generates token)"
-      description: "Validates employee credentials, generates and return a employee specific token"
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: Login Credentials for employee's
-          required: true
-          schema:
-            $ref: "#/definitions/EmployeeLoginCredentials"
-      responses:
-        200:
-          description: Successful login
-          schema:
-            $ref: "#/definitions/EmployeeLoginResponse"
-        401:
-          description: Unauthorized - Invalid credentials
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-  
   /customers:
     post:
       tags:
@@ -108,6 +81,11 @@ paths:
               phone: 111-222-3333
               address: 123 Main St
               role: customer
+        404:
+          description: "Customer field missing"
+          schema:
+            $ref: "#definitions/ErrorResponse"
+
 
     get:
       tags:
@@ -320,6 +298,63 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  /employees/login:
+    post:
+      tags:
+        - Employees
+      summary: "login endpoint for employees, (generates token)"
+      description: "Validates employee credentials, generates and return a employee specific token"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Login Credentials for employee's
+          required: true
+          schema:
+            $ref: "#/definitions/EmployeeLoginCredentials"
+      responses:
+        200:
+          description: Successful login
+          schema:
+            $ref: "#/definitions/EmployeeLoginResponse"
+        401:
+          description: Unauthorized - Invalid credentials
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /employees:
+    post:
+      tags:
+        - Employees
+      summary: "Endpoint to create a new employee."
+      description: "Endpoint to create a new employee in our mechanic shop system. emails must be unique"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/CreateEmployeePayload"
+      responses:
+        201:
+          description: "New Employee added successfully"
+          schema:
+            $ref: "#/definitions/CreateEmployeeResponse"
+          examples:
+            application/json:
+              id: 1
+              name: John Doe
+              email: JDoe@example.com
+              phone: 111-222-3333
+              address: 123 Main St
+              role: mechanic
+              salary: 100000
+        404:
+          description: "Employee field missing"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 
 definitions: 
   CustomerLoginCredentials:
@@ -489,3 +524,54 @@ definitions:
       message:
         type: "string"
         description: "Response message"
+
+  CreateEmployeePayload:
+    type: "object"
+    required:
+      - name
+      - email
+      - phone
+      - address
+      - password
+      - role
+      - salary
+    properties:
+      name:
+        type: "string"
+        description: "Employee's Full name"
+      email:
+        type: "string"
+        description: "Employee's email"
+      phone:
+        type: "string"
+        description: "Employee's phone number (e.g. 111-222-3333)"
+      address:
+        type: "string"
+        description: "Employee's home address"
+      password:
+        type: "string"
+        description: "Employee-created password"
+      role:
+        type: "string"
+        description: "identifies the user as an employee"
+      salary:
+        type: "integer"
+        description: "How much the employee make's"
+
+  CreateEmployeeResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      email:
+        type: "string"
+      phone:
+        type: "string"
+      address:
+        type: "string"
+      role:
+        type: "string"
+      salary:
+        type: "integer"
