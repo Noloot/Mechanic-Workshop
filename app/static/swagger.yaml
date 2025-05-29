@@ -527,7 +527,7 @@ paths:
             $ref: "#/definitions/DeleteEmployeeResponse"
           examples:
             application/json:
-              message: "Successfully delete employee <employee_id>"
+              message: "Successfully deleted employee <employee_id>"
         401:
           description: Unauthorized - Missing or invalid token
           schema:
@@ -601,7 +601,7 @@ paths:
               message:
                 type: string
               ticket:
-                $ref: "#/definitions/ServiceTicket"
+                $ref: "#/definitions/ServiceTicketPayload"
           examples:
             application/json:
               message: "Ticket created"
@@ -647,7 +647,7 @@ paths:
       tags:
         - Service Tickets
       summary: "Gets all tickets currently in the system"
-      descriptions: "Returns a list of all tickets with details on what is being worked on and what car it is assigned to"
+      description: "Returns a list of all tickets with details on what is being worked on and what car it is assigned to"
       parameters:
         - name: page
           in: query
@@ -709,7 +709,7 @@ paths:
         200:
           description: Ticket retrieved successfully
           schema:
-            $ref: "#/definitions/ServiceTicket"
+            $ref: "#/definitions/ServiceTicketPayload"
           examples:
             application/json:
               id: 10
@@ -791,7 +791,7 @@ paths:
               message:
                 type: string
               ticket:
-                $ref: "#/definitions/ServiceTicket"
+                $ref: "#/definitions/ServiceTicketPayload"
           examples:
             application/json:
               message: "Ticket updated"
@@ -1084,7 +1084,7 @@ definitions:
       message:
         type: "string"
 
-  ServiceTicket:
+  ServiceTicketPayload:
     type: object
     properties:
       id:
@@ -1114,3 +1114,38 @@ definitions:
         type: integer
       name:
         type: string
+
+  AllTickets:
+    type: "object"
+    properties:
+      tickets:
+        type: "array"
+        items:
+          $ref: "#/definitions/CreateTicketResponse"
+      page:
+        type: "integer"
+      per_page:
+        type: "integer"
+      total_tickets:
+        type: "integer"
+
+  CreateTicketResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      service_date:
+        type: "string"
+        format: "date"
+      customer_id:
+        type: "integer"
+      car_id:
+        type: "integer"
+      VIN:
+        type: "string"
+      car_issue:
+        type: "string"
+      is_major_damage:
+        type: "boolean"
+      services:
+        type: "integer"
