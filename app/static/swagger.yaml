@@ -830,6 +830,126 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+    delete:
+      tags:
+        - Service Tickets
+      summary: "Endpoint to delete a ticket"
+      description: "Deletes a service ticket. Requires token authentication, employee must be logged in to delete the ticket"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the ticket to delete"
+      responses:
+        200:
+          description: "Ticket successfully deleted"
+          schema:
+            $ref: "#/definitions/DeleteTicketResponse"
+          examples:
+            application/json:
+              message: "Successfully deleted ticket <ticket_id>"
+        401:
+          description: Unauthorized - Missing or invalid token
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Admin token required
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Ticket not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /tickets/{ticket_id}/assign-mechanic/{employee_id}:
+    put:
+      tags:
+        - Service Tickets
+      summary: "Assign a mechanic to a ticket"
+      description: "Assign an employee (mechanic) to a specific service ticket. Requires admin token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ticket_id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the ticket"
+        - name: employee_id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the mechanic to assign"
+      responses:
+        200:
+          description: "Mechanic assigned to ticket successfully"
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          examples:
+            application/json:
+              message: "Employee 3 assign to ticket 7."
+        401:
+          description: Unauthorized - Missing or invalid token
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Admin access required
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Ticket or Employee not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /tickets/{ticket_id}/remove-mechanic/{employee_id}:
+    put:
+      tags:
+        - Service Tickets
+      summary: "Remove a mechanic from a ticket"
+      descriptions: "Removes an assigned mechanic from a service ticket. Requires Admin Token"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ticket_id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the service ticket"
+        - name: employee_id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the mechanic to remove"
+      responses:
+        200:
+          description: "Mechanic removed from ticket successfully"
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          examples:
+            application/json:
+              message: "Employee 3 removed from ticket 7."
+        401:
+          description: Unauthorized - Missing or invalid token
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Admin access required
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Ticket or Employee not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
 definitions:
   CustomerLoginCredentials:
     type: "object"
@@ -1151,3 +1271,10 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/ServiceType"
+
+  DeleteTicketResponse:
+    type: "object"
+    properties:
+      message:
+        type: string
+        description: Confirmation message of ticket deletion
