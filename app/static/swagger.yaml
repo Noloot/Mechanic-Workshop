@@ -511,7 +511,7 @@ paths:
       tags:
         - Employees
       summary: "Endpoint to delete an Employee"
-      description: "Endpoint to delete a employee. Requires token authentication, employee must be loggen in to delete their account"
+      description: "Endpoint to delete a employee. Requires token authentication, employee must be logged in to delete their account"
       security:
         - bearerAuth: []
       parameters:
@@ -1148,4 +1148,6 @@ definitions:
       is_major_damage:
         type: "boolean"
       services:
-        type: "integer"
+        type: array
+        items:
+          $ref: "#/definitions/ServiceType"
