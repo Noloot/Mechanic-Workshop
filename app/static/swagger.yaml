@@ -601,7 +601,7 @@ paths:
               message:
                 type: string
               ticket:
-                $ref: "#/definitions/ServiceTicketPayload"
+                $ref: "#/definitions/CreateServiceTicketPayload"
           examples:
             application/json:
               message: "Ticket created"
@@ -950,6 +950,193 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  /cars:
+    post:
+      tags:
+        - Cars
+      summary: "Endpoint to create a car for a customer"
+      description: "Endpoint to create a car and assign to a customer with details on what type of car it is."
+      security:
+        bearerAuth: []
+      parameters:
+        - in: body
+          name: body
+          description: "Car details to be created"
+          required: true
+          schema:
+            $ref: "#/definitions/CreateCarPayload"
+      responses:
+        201:
+          description: "Successfully created a car"
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              car:
+                $ref: "#/definitions/CreateCarResponse"
+          examples:
+            application/json:
+              message: "Car added"
+              car:
+                id: 5
+                color: red
+                customer_id: 4
+                make: Ferrari
+                model: SF90 Stradale
+                model_year: 2025
+        401:
+          description: Unauthorized - Token missing or invalid
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Admin access required
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    get:
+      tags:
+        - Cars
+      summary: "Gets all cars in database"
+      description: "Endpoint to retrieve all cars in the database"
+      parameters:
+        - name: page
+          in: query
+          type: integer
+          required: false
+          description: "Page number (default: 1)"
+        - name: per_page
+          in: query
+          type: integer
+          required: false
+          description: "Number of results per page (default: 10)"
+      responses:
+        200:
+          description: "Retrieved all Cars successfully"
+          schema:
+            $ref: "#/definitions/AllCars"
+          examples:
+            application/json:
+              cars:
+                - id: 1
+                  color: black
+                  make: BMW
+                  model: M4
+                  model_year: 2025
+                  customer_id: 1
+                - id: 2
+                  color: blue
+                  make: BMW
+                  model: M4
+                  model_year: 2025
+                  customer_id: 1
+              page: 1
+              per_page: 10
+              total_cars: 2
+
+  /cars/{id}:
+    get:
+      tags:
+        - Cars
+      summary: "Retrieve a single car by ID"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the car to retrieve"
+      responses:
+        200:
+          description: "Car retrieved successfully"
+          schema:
+            $ref: "#/definitions/CreateCarResponse"
+        404:
+          description: Customer not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    put:
+      tags:
+        - Cars
+      summary: "Endpoint to update a Car"
+      description: "Endpoint to update a Car, this is a token authenticated route, and the user must be logged in to update"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the Car to update"
+        - in: body
+          name: body
+          description: "Information required to update a Car"
+          required: true
+          schema:
+            $ref: "#/definitions/UpdateCarPayload"
+      responses:
+        200:
+          description: "Successfully Updated Employee"
+          schema:
+            $ref: "#/definitions/UpdateCarResponse"
+          examples:
+            application/json:
+              id: 1
+              color: black
+              make: Toyota
+              model: Camry
+              model_year: 2025
+        401:
+          description: Unauthorized - Missing or Invalid token
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Not allowed to perform this action
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Employee not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+        - Cars
+      summary: "Endpoint to delete a Car"
+      description: "Deletes a Car. Requires token authentication, employee must be logged in to delete the ticket"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the Car to delete"
+      responses:
+        200:
+          description: "Car successfully deleted"
+          schema:
+            $ref: "#/definitions/DeleteCarResponse"
+          examples:
+            application/json:
+              message: "Successfully deleted Car <car_id>"
+        401:
+          description: Unauthorized - Missing or invalid token
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Admin token required
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Car not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
 definitions:
   CustomerLoginCredentials:
     type: "object"
@@ -1204,7 +1391,7 @@ definitions:
       message:
         type: "string"
 
-  ServiceTicketPayload:
+  CreateServiceTicketPayload:
     type: object
     properties:
       id:
@@ -1278,3 +1465,76 @@ definitions:
       message:
         type: string
         description: Confirmation message of ticket deletion
+
+  CreateCarPayload:
+    type: object
+    required:
+      - color
+      - make
+      - model
+      - model_year
+      - customer_id
+    properties:
+      color:
+        type: string
+        description: "Color of the car"
+      make:
+        type: string
+        description: "Make of the car"
+      model:
+        type: string
+        description: "Model of the car"
+      model_year:
+        type: integer
+        description: "Year the car was made"
+      customer_id:
+        type: integer
+        description: "ID of the customer the car belongs to"
+
+  CreateCarResponse:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      color:
+        type: string
+      make:
+        type: string
+      model:
+        type: string
+      model_year:
+        type: integer
+      customer_id:
+        type: integer
+
+  AllCars:
+    type: "object"
+    properties:
+      cars:
+        type: "array"
+        items:
+          $ref: "#/definitions/CreateCarResponse"
+      page:
+        type: "integer"
+      per_page:
+        type: "integer"
+      total_cars:
+        type: "integer"
+
+  UpdateCarPayload:
+    allOf:
+      - $ref: "#/definitions/CreateCarResponse"
+
+  UpdateCarResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      customer:
+        $ref: "#/definitions/CreateCarResponse"
+
+  DeleteCarResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
