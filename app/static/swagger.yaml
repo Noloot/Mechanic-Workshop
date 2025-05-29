@@ -737,7 +737,6 @@ paths:
       summary: "Update an existing service ticket"
       description: |
         Updates an existing ticket’s data. Requires admin authentication.
-
         If `service_type_ids` is provided, validates all IDs and associates them with the ticket.
       security:
         - bearerAuth: []
@@ -961,7 +960,7 @@ paths:
       produces:
         - application/json
       security:
-        bearerAuth: []
+        - bearerAuth: []
       parameters:
         - in: body
           name: body
@@ -1154,6 +1153,268 @@ paths:
             $ref: "#/definitions/ErrorResponse"
         404:
           description: Car not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /service_types:
+    post:
+      tags:
+        - Service Types
+      summary: "Create a service type that can be added for common services for cars."
+      description: "Endpoint to create a service type for adding common service types for cars."
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: body
+          name: body
+          description: "Service type to be created"
+          required: true
+          schema:
+            $ref: "#/definitions/CreateServiceTypePayload"
+      responses:
+        201:
+          description: "Successfully created a service type"
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              service_type:
+                $ref: "#/definitions/CreateServiceTypeResponse"
+          examples:
+            application/json:
+              message: "Service Type added"
+              service_type:
+                id: 5
+                name: Air Filter
+                price: 18.99
+        401:
+          description: Unauthorized - Token missing or invalid
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Admin access required
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    get:
+      tags:
+        - Service Types
+      summary: "Gets all Service Types in database"
+      description: "Endpoint to retrieve all Service Types in the database"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "List of service types"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/CreateServiceTypeResponse"
+          examples:
+            application/json:
+              service_types:
+                - id: 1
+                  description: null
+                  name: Air Filter
+                  price: 18.99
+                - id: 2
+                  description: null
+                  name: Tire Replacement
+                  price: 30.99
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /service_types/{id}:
+    put:
+      tags:
+        - Service Types
+      summary: "Update an existing service types"
+      description: |
+        Updates an existing type's data. Requires admin authentication.
+      security:
+        - bearerAuth: []
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "The ID of the service ticket to update"
+        - in: body
+          name: body
+          description: Updated service type payload
+          required: true
+          schema:
+            $ref: "#/definitions/CreateServiceTypePayload"
+      responses:
+        200:
+          description: Successfully updated Service Type
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              Service Type:
+                $ref: "#/definitions/CreateServiceTicketPayload"
+          examples:
+            application/json:
+              message: "Service Type updated"
+              Service Type:
+                id: 4
+                description: null
+                name: Fir Ailter
+        400:
+          description: Bad Request - Validation Error or Invalid service_type_ids
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        401:
+          description: Unauthorized - Token missing or invalid
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Admin access required
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Ticket not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    delete:
+      tags:
+        - Service Types
+      summary: "Endpoint to delete a Service Type"
+      description: "Deletes a Service Type. Requires Admin token authentication, employee must be logged in to delete the ticket"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the Service Type to delete"
+      responses:
+        200:
+          description: "Service Type successfully deleted"
+          schema:
+            $ref: "#/definitions/DeleteServiceTypeResponse"
+          examples:
+            application/json:
+              message: "Successfully deleted Service Type <service_type_id>"
+        401:
+          description: Unauthorized - Missing or invalid token
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Admin token required
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Car not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /service_types/{service_type_id}/assign_service_type/{ticket_id}:
+    put:
+      tags:
+        - Service Types
+      summary: "Assign a Service Type to a ticket"
+      description: "Assign an Service Type to a specific service ticket. Requires admin token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: service_type_id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the service type"
+        - name: ticket_id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the service type to assign"
+      responses:
+        200:
+          description: "Service Type assigned to ticket successfully"
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          examples:
+            application/json:
+              message: "Service Type 4 assign to ticket 7."
+        401:
+          description: Unauthorized - Missing or invalid token
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Admin access required
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Ticket or Employee not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /service_types/{service_type_id}/remove_service_type/{ticket_id}:
+    put:
+      tags:
+        - Service Types
+      summary: "Remove a Service Type from a ticket"
+      descriptions: "Removes an assigned service type from a service ticket. Requires Admin Token"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: service_type_id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the service type"
+        - name: ticket_id
+          in: path
+          required: true
+          type: integer
+          description: "ID of the ticket to remove from"
+      responses:
+        200:
+          description: "Service Type removed from ticket successfully"
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          examples:
+            application/json:
+              message: "Service Type 3 removed from ticket 7."
+        401:
+          description: Unauthorized - Missing or invalid token
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Admin access required
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Ticket or Employee not found
           schema:
             $ref: "#/definitions/ErrorResponse"
 
@@ -1434,14 +1695,6 @@ definitions:
         items:
           $ref: "#/definitions/ServiceType"
 
-  ServiceType:
-    type: object
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-
   AllTickets:
     type: "object"
     properties:
@@ -1554,6 +1807,47 @@ definitions:
         $ref: "#/definitions/CreateCarResponse"
 
   DeleteCarResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+
+  CreateServiceTypePayload:
+    type: object
+    required:
+      - name
+      - price
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+        format: float
+
+  CreateServiceTypeResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+        format: float
+      description:
+        type: string
+
+  ServiceType:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+
+  DeleteServiceTypeResponse:
     type: "object"
     properties:
       message:

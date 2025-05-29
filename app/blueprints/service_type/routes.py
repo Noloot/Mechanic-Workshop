@@ -58,7 +58,6 @@ def remove_service_type_from_ticket(service_type_id, ticket_id):
 @serviceType_bp.route("/", methods=['GET'])
 def get_service_types():
     service_types = db.session.execute(select(ServiceType)).scalars().all()
-    print("DEBUG: Retrieved service types:", service_types)
     return jsonify(service_types_schema.dump(service_types)), 200
 
 
