@@ -1156,6 +1156,48 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  /cars/search:
+    get:
+      tags:
+        - Cars
+      summary: "Search cars by make"
+      description: "Returns a list of cars that match the specified make. Supports partial matches (case-insensitive)"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: make
+          in: query
+          required: true
+          type: string
+          description: "Make of the car to search for (e.g., Toyota, BMW)"
+      responses:
+        200:
+          description: "Successfully retrieved matching cars."
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/CreateCarResponse"
+          examples:
+            application/json:
+              - id: 3
+                color: white
+                make: Toyota
+                model: Corolla
+                model_year: 2021
+                customer_id: 5
+              - id: 7
+                color: black
+                make: Toyota
+                model: Camry
+                model_year: 2022
+                customer_id: 2
+        400:
+          description: "Missing or invalid query parameter"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
   /service_types:
     post:
       tags:
