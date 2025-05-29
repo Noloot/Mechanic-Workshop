@@ -956,6 +956,10 @@ paths:
         - Cars
       summary: "Endpoint to create a car for a customer"
       description: "Endpoint to create a car and assign to a customer with details on what type of car it is."
+      consumes:
+        - application/json
+      produces:
+        - application/json
       security:
         bearerAuth: []
       parameters:
@@ -1003,6 +1007,10 @@ paths:
         - Cars
       summary: "Gets all cars in database"
       description: "Endpoint to retrieve all cars in the database"
+      consumes:
+        - application/json
+      produces:
+        - application/json
       parameters:
         - name: page
           in: query
@@ -1043,6 +1051,10 @@ paths:
       tags:
         - Cars
       summary: "Retrieve a single car by ID"
+      consumes:
+        - application/json
+      produces:
+        - application/json
       parameters:
         - name: id
           in: path
@@ -1055,7 +1067,7 @@ paths:
           schema:
             $ref: "#/definitions/CreateCarResponse"
         404:
-          description: Customer not found
+          description: Car not found
           schema:
             $ref: "#/definitions/ErrorResponse"
 
@@ -1064,6 +1076,10 @@ paths:
         - Cars
       summary: "Endpoint to update a Car"
       description: "Endpoint to update a Car, this is a token authenticated route, and the user must be logged in to update"
+      consumes:
+        - application/json
+      produces:
+        - application/json
       security:
         - bearerAuth: []
       parameters:
@@ -1080,7 +1096,7 @@ paths:
             $ref: "#/definitions/UpdateCarPayload"
       responses:
         200:
-          description: "Successfully Updated Employee"
+          description: "Successfully Updated Car"
           schema:
             $ref: "#/definitions/UpdateCarResponse"
           examples:
@@ -1099,7 +1115,7 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
         404:
-          description: Employee not found
+          description: Car not found
           schema:
             $ref: "#/definitions/ErrorResponse"
 
@@ -1108,6 +1124,10 @@ paths:
         - Cars
       summary: "Endpoint to delete a Car"
       description: "Deletes a Car. Requires token authentication, employee must be logged in to delete the ticket"
+      consumes:
+        - application/json
+      produces:
+        - application/json
       security:
         - bearerAuth: []
       parameters:
