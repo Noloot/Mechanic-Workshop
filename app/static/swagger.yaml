@@ -549,6 +549,7 @@ paths:
       description:
         Creates a new service ticket in the system. Requires admin authentication and supports assigning multiple service types.
         If `is_major_damage` is true, the ticket will also be sent to a sister site.
+        Validates all `service_type_ids` provided. If any ID is invalid (doesn't exist), returns a 400 with a list of invalid IDs.
       consumes:
         - application/json
       produces:
@@ -618,7 +619,17 @@ paths:
         400:
           description: Bad Request - Validation Error
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            type: object
+            properties:
+              message:
+                type: string
+              invalid_ids:
+                type: array
+                items:
+                  type: integer
+          example:
+            message: "Invalid service_type_ids"
+            invalid_ids: [888, 1234]
         401:
           description: Unauthorized - Token missing or invalid
           schema:
@@ -629,6 +640,145 @@ paths:
             $ref: "#/definitions/ErrorResponse"
         500:
           description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /tickets/{id}:
+    get:
+      tags:
+        - Service Tickets
+      summary: "Gets tickets by ID"
+      description: "Returns full ticket details including assigned services, customer and car IDs, and damage info"
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "The ID of the service ticket to retrieve"
+      responses:
+        200:
+          description: Ticket retrieved successfully
+          schema:
+            $ref: "#/definitions/ServiceTicket"
+          examples:
+            application/json:
+              id: 10
+              service_date: "2025-05-25"
+              customer_id: 1
+              car_id: 2
+              VIN: "1HGCM82633A004352"
+              car_issue: "Brake failure"
+              is_major_damage: false
+              services:
+                - id: 1
+                  name: "Oil Change"
+        401:
+          description: Unauthorized - Token missing or invalid
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Ticket not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+    put:
+      tags:
+        - Service Tickets
+      summary: "Update an existing service ticket"
+      description: |
+        Updates an existing ticket’s data. Requires admin authentication.
+
+        If `service_type_ids` is provided, validates all IDs and associates them with the ticket.
+      security:
+        - bearerAuth: []
+      consumes:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: "The ID of the service ticket to update"
+        - in: body
+          name: body
+          description: Updated ticket payload
+          required: true
+          schema:
+            type: object
+            required:
+              - service_date
+              - customer_id
+              - car_id
+              - VIN
+              - car_issue
+              - is_major_damage
+            properties:
+              service_date:
+                type: string
+                format: date
+                example: "2025-06-01"
+              customer_id:
+                type: integer
+              car_id:
+                type: integer
+              VIN:
+                type: string
+              car_issue:
+                type: string
+              is_major_damage:
+                type: boolean
+              service_type_ids:
+                type: array
+                items:
+                  type: integer
+                description: Optional list of service type IDs to update associations
+      responses:
+        200:
+          description: Successfully updated ticket
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              ticket:
+                $ref: "#/definitions/ServiceTicket"
+          examples:
+            application/json:
+              message: "Ticket updated"
+              ticket:
+                id: 10
+                service_date: "2025-06-01"
+                customer_id: 1
+                car_id: 2
+                VIN: "1HGCM82633A004352"
+                car_issue: "Brake pads replaced"
+                is_major_damage: false
+                services:
+                  - id: 2
+                    name: "Brake Replacement"
+        400:
+          description: Bad Request - Validation Error or Invalid service_type_ids
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              invalid_ids:
+                type: array
+                items:
+                  type: integer
+        401:
+          description: Unauthorized - Token missing or invalid
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        403:
+          description: Forbidden - Admin access required
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        404:
+          description: Ticket not found
           schema:
             $ref: "#/definitions/ErrorResponse"
 
@@ -889,6 +1039,8 @@ definitions:
   ServiceTicket:
     type: object
     properties:
+      id:
+        type: integer
       VIN:
         type: string
       car_issue:
