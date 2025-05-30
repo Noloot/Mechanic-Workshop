@@ -57,9 +57,24 @@ def remove_service_type_from_ticket(service_type_id, ticket_id):
 
 @serviceType_bp.route("/", methods=['GET'])
 def get_service_types():
-    service_types = db.session.execute(select(ServiceType)).scalars().all()
-    return jsonify(service_types_schema.dump(service_types)), 200
-
+    try:
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 10))
+        offset = (page - 1) * per_page
+        total = db.session.execute(select(ServiceType)).scalars().all()
+        total_count = len(total)
+        
+        query = select(ServiceType).offset(offset).limit(per_page)
+        service_types = db.session.execute(query).scalars().all()
+        
+        return jsonify({
+            'page': page,
+            'per_page': per_page,
+            'total_service_types': total_count,
+            'service_types': service_types_schema.dump(service_types)
+        }), 200
+    except Exception as e:
+        return jsonify({'message': 'Error fetching service types', 'error': str(e)}), 500
 
 @serviceType_bp.route('/<int:id>', methods=['PUT'])
 @admin_required
