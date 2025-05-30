@@ -121,7 +121,7 @@ def update_ticket(id):
         return jsonify({'message': 'Ticket not found'}), 404
     
     data = request.get_json()
-    service_type_ids = data.pop("service_ticket_ids", [])
+    service_type_ids = data.pop("service_type_ids", [])
     
     try:
         ticket = service_ticket_create_schema.load(request.json, instance=ticket)
