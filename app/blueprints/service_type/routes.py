@@ -14,7 +14,7 @@ def add_service_type():
         data = request.get_json()
         service_type = service_type_schema.load(data)
     except ValidationError as e:
-        return jsonify({e.messages}), 400
+        return jsonify(e.messages), 400
     
     db.session.add(service_type)
     db.session.commit()
