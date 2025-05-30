@@ -33,7 +33,7 @@ def token_required(f):
         try:
             data = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
             request.user_id = int(data['sub'])
-            request.role = data['role']
+            request.user_role = data['role']
             
         except jose.exceptions.ExpiredSignatureError:
             return jsonify({'message': 'Token has expired!'}), 401
