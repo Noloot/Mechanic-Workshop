@@ -56,7 +56,6 @@ class TestCar(unittest.TestCase):
         self.assertEqual(data["car"]["customer_id"], self.customer_id)
 
     def test_add_car_missing_fields(self):
-        # Missing 'make', 'model', and 'customer_id'
         payload = {
             "color": "Red",
             "model_year": 2021
@@ -76,7 +75,6 @@ class TestCar(unittest.TestCase):
 
     def test_get_cars_paginated(self):
         with self.app.app_context():
-            # Add multiple cars for pagination
             for i in range(3):
                 car = Car(
                     color="Black",
@@ -149,7 +147,6 @@ class TestCar(unittest.TestCase):
         self.assertEqual(data["car"]["model_year"], 2019)
 
     def test_update_car_unauthorized(self):
-        # Create a second customer and car belonging to them
         with self.app.app_context():
             other_customer = Customer(
                 name="Other User",
@@ -180,7 +177,7 @@ class TestCar(unittest.TestCase):
         response = self.client.put(
             f"/cars/{other_car_id}",
             json=update_payload,
-            headers=self.auth_header  # Logged in as original customer, not the owner
+            headers=self.auth_header
         )
 
         self.assertEqual(response.status_code, 403)
@@ -202,7 +199,6 @@ class TestCar(unittest.TestCase):
             db.session.commit()
             car_id = car.id
 
-        # Delete the car
         response = self.client.delete(
             f"/cars/{car_id}",
             headers=self.auth_header
@@ -213,7 +209,6 @@ class TestCar(unittest.TestCase):
         self.assertIn("message", data)
         self.assertIn("deleted", data["message"].lower())
 
-        # Confirm deletion in DB
         with self.app.app_context():
             deleted = db.session.get(Car, car_id)
             self.assertIsNone(deleted)

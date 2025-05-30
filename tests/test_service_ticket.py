@@ -122,7 +122,6 @@ class TestServiceTicket(unittest.TestCase):
             "car_issue": "Incomplete payload",
             "is_major_damage": False,
             "service_types_ids": [self.service_type_id]
-            # Missing service_date, customer_id, and VIN
         }
         
         response = self.client.post(
@@ -193,7 +192,6 @@ class TestServiceTicket(unittest.TestCase):
 
     def test_update_ticket(self):
         with self.app.app_context():
-            # Step 1: Create original ticket
             ticket = ServiceTicket(
                 service_date=date.today(),
                 customer_id=self.customer_id,
@@ -207,7 +205,6 @@ class TestServiceTicket(unittest.TestCase):
             db.session.commit()
             ticket_id = ticket.id
 
-        # Step 2: Update payload
         new_service_type = ServiceType(
             name="Brake Inspection",
             description="Full brake system check",
@@ -228,7 +225,6 @@ class TestServiceTicket(unittest.TestCase):
             "service_type_ids": [new_service_type_id]
         }
 
-        # Step 3: Make PUT request
         response = self.client.put(
             f"/tickets/{ticket_id}",
             json=update_payload,
@@ -245,7 +241,6 @@ class TestServiceTicket(unittest.TestCase):
 
     def test_delete_ticket(self):
         with self.app.app_context():
-            # Create a ticket to delete
             ticket = ServiceTicket(
                 service_date = date.today(),
                 customer_id = self.customer_id,
@@ -259,7 +254,6 @@ class TestServiceTicket(unittest.TestCase):
             db.session.commit()
             ticket_id = ticket.id
 
-        # Perform the DELETE request
         response = self.client.delete(f"/tickets/{ticket_id}", headers=self.auth_header)
         self.assertEqual(response.status_code, 200)
 
@@ -267,14 +261,12 @@ class TestServiceTicket(unittest.TestCase):
         self.assertIn("message", data)
         self.assertIn("deleted", data["message"].lower())
 
-        # Confirm it's really gone
         with self.app.app_context():
             deleted_ticket = db.session.get(ServiceTicket, ticket_id)
             self.assertIsNone(deleted_ticket)
 
     def test_assign_mechanic_to_ticket(self):
         with self.app.app_context():
-            # Create a ticket without assigning mechanic
             ticket = ServiceTicket(
                 service_date=date.today(),
                 customer_id=self.customer_id,
@@ -288,7 +280,6 @@ class TestServiceTicket(unittest.TestCase):
             db.session.commit()
             ticket_id = ticket.id
 
-        # Assign mechanic to the ticket
         response = self.client.put(
             f"/tickets/{ticket_id}/assign-mechanic/{self.employee_id}",
             headers=self.auth_header
@@ -299,7 +290,6 @@ class TestServiceTicket(unittest.TestCase):
         self.assertIn("message", data)
         self.assertIn("assign", data["message"].lower())
 
-        # Confirm the mechanic was added to the ticket
         with self.app.app_context():
             updated_ticket = db.session.get(ServiceTicket, ticket_id)
             self.assertEqual(len(updated_ticket.employee), 1)
@@ -307,7 +297,6 @@ class TestServiceTicket(unittest.TestCase):
 
     def test_remove_mechanic_from_ticket(self):
         with self.app.app_context():
-            # Create a ticket and assign the mechanic
             ticket = ServiceTicket(
                 service_date=date.today(),
                 customer_id=self.customer_id,
@@ -316,13 +305,12 @@ class TestServiceTicket(unittest.TestCase):
                 car_issue="Check engine light",
                 is_major_damage=False,
                 services=[self.service_type],
-                employee=[self.employee]  # Assign during creation
+                employee=[self.employee]
             )
             db.session.add(ticket)
             db.session.commit()
             ticket_id = ticket.id
 
-        # Remove the mechanic from the ticket
         response = self.client.put(
             f"/tickets/{ticket_id}/remove-mechanic/{self.employee_id}",
             headers=self.auth_header
@@ -333,7 +321,6 @@ class TestServiceTicket(unittest.TestCase):
         self.assertIn("message", data)
         self.assertIn("removed", data["message"].lower())
 
-        # Confirm mechanic was removed
         with self.app.app_context():
             updated_ticket = db.session.get(ServiceTicket, ticket_id)
             self.assertEqual(len(updated_ticket.employee), 0)

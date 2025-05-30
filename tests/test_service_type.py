@@ -52,7 +52,6 @@ class TestServiceType(unittest.TestCase):
         self.assertEqual(data["service_type"]["price"], 89.99)
         
     def test_add_service_type_missing_fields(self):
-        # Missing name and price
         payload = {
             "description": "No name or price"
         }
@@ -70,7 +69,6 @@ class TestServiceType(unittest.TestCase):
 
     def test_get_service_types_paginated(self):
         with self.app.app_context():
-            # Add multiple service types
             for i in range(5):
                 st = ServiceType(
                     name=f"Service {i}",
@@ -140,14 +138,12 @@ class TestServiceType(unittest.TestCase):
         self.assertIn("message", data)
         self.assertIn("deleted", data["message"].lower())
 
-        # Confirm deletion
         with self.app.app_context():
             deleted = db.session.get(ServiceType, service_id)
             self.assertIsNone(deleted)
 
     def test_assign_service_type_to_ticket(self):
         with self.app.app_context():
-            # Setup Customer and Car
             customer = Customer(
                 name="Test Customer",
                 email="customer@email.com",
@@ -169,7 +165,6 @@ class TestServiceType(unittest.TestCase):
             db.session.add(car)
             db.session.commit()
 
-            # Create Ticket
             ticket = ServiceTicket(
                 VIN="1234567890",
                 service_date=date(2025, 6, 1),
@@ -181,7 +176,6 @@ class TestServiceType(unittest.TestCase):
             db.session.add(ticket)
             db.session.commit()
 
-            # Create Service Type
             service_type = ServiceType(
                 name="Diagnostic Test",
                 description="Computerized scan",
@@ -190,7 +184,6 @@ class TestServiceType(unittest.TestCase):
             db.session.add(service_type)
             db.session.commit()
 
-            # Assign service type to ticket
             response = self.client.put(
                 f"/service_types/{service_type.id}/assign_service_type/{ticket.id}",
                 headers=self.auth_header
@@ -205,7 +198,6 @@ class TestServiceType(unittest.TestCase):
             
     def test_remove_service_type_from_ticket(self):
         with self.app.app_context():
-            # Create customer and car
             customer = Customer(
                 name="Test Customer",
                 email="customer@email.com",
@@ -227,7 +219,6 @@ class TestServiceType(unittest.TestCase):
             db.session.add(car)
             db.session.commit()
 
-            # Create service type
             service_type = ServiceType(
                 name="Alignment",
                 description="Wheel alignment service",
@@ -236,7 +227,6 @@ class TestServiceType(unittest.TestCase):
             db.session.add(service_type)
             db.session.commit()
 
-            # Create service ticket with service type attached
             ticket = ServiceTicket(
                 VIN="1111111111",
                 service_date=date(2025, 6, 1),
@@ -249,7 +239,6 @@ class TestServiceType(unittest.TestCase):
             db.session.add(ticket)
             db.session.commit()
 
-            # Remove the service type from the ticket
             response = self.client.put(
                 f"/service_types/{service_type.id}/remove_service_type/{ticket.id}",
                 headers=self.auth_header
@@ -260,6 +249,5 @@ class TestServiceType(unittest.TestCase):
             self.assertIn("message", data)
             self.assertIn("remove", data["message"].lower())
 
-            # Confirm removal
             updated_ticket = db.session.get(ServiceTicket, ticket.id)
             self.assertEqual(len(updated_ticket.services), 0)
