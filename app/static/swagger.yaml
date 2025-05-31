@@ -87,7 +87,7 @@ paths:
     get:
       tags:
         - Customers
-      summary: "Returns all Customers"
+      summary: "Returns all Customers with their cars."
       description: "Returns a paginated list of all customers."
       parameters:
         - name: page
@@ -102,7 +102,7 @@ paths:
           description: "Number of results per page (default: 10)"
       responses:
         200:
-          description: "Retrieved Customers Successfully"
+          description: "A paginated list of customers and their cars"
           schema:
             $ref: "#/definitions/AllCustomers"
           examples:
@@ -129,7 +129,7 @@ paths:
     get:
       tags:
         - Customers
-      summary: "Retrieve a single customer by ID"
+      summary: "Retrieve a single customer by ID with car data"
       parameters:
         - name: id
           in: path
