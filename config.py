@@ -1,4 +1,4 @@
-
+import os
 
 class DevelopmentConfig:
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:Mateo0106(@localhost/mechanic'
@@ -10,5 +10,6 @@ class TestingConfig:
     CACHE_TYPE = 'SimpleCache'
 
 class ProductionConfig:
-    pass
+    SQLALCHEMY_DATA_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') 
+    CACHE_TYPE = "SimpleCache"
     
