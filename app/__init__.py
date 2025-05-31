@@ -7,6 +7,7 @@ from app.blueprints.cars import cars_bp
 from app.blueprints.Service_Ticket import serviceTicket_bp
 from app.blueprints.service_type import serviceType_bp
 from flask_swagger_ui import get_swaggerui_blueprint
+from config import DevelopmentConfig, TestingConfig, ProductionConfig
 
 SWAGGER_URL = '/api/docs'
 API_URL = '/static/swagger.yaml'
@@ -19,9 +20,15 @@ swaggerui_blueprint = get_swaggerui_blueprint(
     }
 )
 
+config_map = {
+    'DevelopmentConfig': DevelopmentConfig,
+    'TestingConfig': TestingConfig,
+    'ProductionConfig': ProductionConfig
+}
+
 def create_app(config_name):
     app = Flask(__name__)
-    app.config.from_object((f'config.{config_name}'))
+    app.config.from_object(config_map[config_name])
     
     ma.init_app(app)
     db.init_app(app)
