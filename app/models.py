@@ -49,7 +49,7 @@ class Customer(Base):
     password: Mapped[str] = mapped_column(db.String(350), nullable=False)
     role: Mapped[str] = mapped_column(db.String(50), nullable=False)
     
-    cars: Mapped[List['Car']] = db.relationship(back_populates='customer', cascade="all, delete", passive_deletes=True)
+    cars: Mapped[List['Car']] = db.relationship(back_populates='customer', cascade="all, delete", passive_deletes=True, lazy='selectin')
     
 class Employee(Base):
     __tablename__ = 'employee'
