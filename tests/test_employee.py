@@ -52,7 +52,7 @@ class TestEmployee(unittest.TestCase):
         }
         
         response = self.client.post('/employees/', json = payload)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
         self.assertIn("email", response.json)
         
     def test_employee_login(self):
