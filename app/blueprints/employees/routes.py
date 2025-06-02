@@ -13,7 +13,14 @@ def add_employee():
     try:
         employee = employee_schema.load(request.json)
     except ValidationError as e:
-        return jsonify(e.messages), 404
+        return jsonify(e.messages), 400
+    
+    existing_employee = db.session.execute(
+        select(Employee).where(Employee.email == employee.email)
+    ).scalar_one_or_none()
+    
+    if existing_employee:
+        return jsonify({'message': 'Employee with this email already exists'}), 409
     
     employee.password = generate_password_hash(employee.password)
     
