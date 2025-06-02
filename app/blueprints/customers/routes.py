@@ -42,6 +42,13 @@ def add_customer():
     except ValidationError as e:
         return jsonify(e.messages),400
     
+    existing_customer = db.session.execute(
+        select(Customer).where(Customer.email == customer_data.email)
+    ).scalar_one_or_none()
+    
+    if existing_customer:
+        return jsonify({'message': 'Email is already in use'}), 409
+    
     customer_data.password = generate_password_hash(customer_data.password)
     
     new_customer = customer_data
